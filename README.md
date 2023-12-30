@@ -2,7 +2,7 @@
   <strong>🪝 wp-hook</strong>
   <p>WordPress hook with object-oriented programming</p>
 
-  [![wp](https://github.com/syntatis/wp-hook/actions/workflows/wp.yml/badge.svg)](https://github.com/syntatis/wp-hook/actions/workflows/wp.yml)
+  [![wp](https://github.com/syntatis/wp-hook/actions/workflows/wp.yml/badge.svg)](https://github.com/syntatis/wp-hook/actions/workflows/wp.yml) [![codecov](https://codecov.io/gh/syntatis/wp-hook/graph/badge.svg?token=04HZ3BRM19)](https://codecov.io/gh/syntatis/wp-hook)
 </div>
 
 ---
