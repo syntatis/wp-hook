@@ -1,0 +1,8 @@
+includes:
+	- tests/phpstan/conditional.config.php
+
+parameters:
+	level: 9
+	paths:
+		- app
+	checkGenericClassInNonGenericObjectType: false
