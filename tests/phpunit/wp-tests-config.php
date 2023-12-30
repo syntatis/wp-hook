@@ -40,7 +40,7 @@ define('WP_DEBUG', true);
 define('DB_NAME', getenv('WP_DB_TEST_NAME') ? getenv('WP_DB_TEST_NAME') : 'wp_test');
 define('DB_USER', getenv('WP_DB_TEST_USER') ? getenv('WP_DB_TEST_USER') : 'wp_test');
 define('DB_PASSWORD', getenv('WP_DB_TEST_PASS') ? getenv('WP_DB_TEST_PASS') : 'wp_test');
-define('DB_HOST', getenv('WP_DB_TEST_HOST') ? getenv('WP_DB_TEST_HOST') : 'db_test');
+define('DB_HOST', getenv('WP_DB_TEST_HOST') ? getenv('WP_DB_TEST_HOST') : 'localhost');
 define('DB_CHARSET', 'utf8');
 define('DB_COLLATE', '');
 
