@@ -125,47 +125,75 @@ class HookTest extends TestCase
 		apply_filters('allow_empty_comment', false, []);
 	}
 
-	public function testAddActionGroup(): void
+	public function testRemoveAllActions(): void
 	{
-		$func = static function (): bool {
-			return true;
+		$hook = new Hook();
+		$func = static function ($value): void {
 		};
 
-		$hook = new Hook('tests-group-action');
+		$funcNative = static function ($value): void {
+		};
 
-		// No-run.
+		add_action('wp', $funcNative);
+		add_action('init', $funcNative);
+
 		$hook->addAction('wp', $func);
-		$this->assertFalse(has_action('wp', $func));
-
-		// Run.
 		$hook->addAction('init', $func);
 		$hook->run();
 
-		$actual = has_action('init', $func);
-		$expect = 10;
+		$this->assertSame(10, has_action('wp', $func));
+		$this->assertSame(10, has_action('init', $func));
+		$this->assertSame(10, has_action('wp', $funcNative));
+		$this->assertSame(10, has_action('init', $funcNative));
 
-		$this->assertSame($expect, $actual);
+		$hook->removeAllFilters(); // These methods should de-register all actions.
+
+		$this->assertSame(10, has_action('wp', $func));
+		$this->assertSame(10, has_action('init', $func));
+		$this->assertSame(10, has_action('wp', $funcNative));
+		$this->assertSame(10, has_action('init', $funcNative));
+
+		$hook->removeAllActions();
+
+		$this->assertFalse(has_action('wp', $func));
+		$this->assertFalse(has_action('init', $func));
+		$this->assertSame(10, has_action('wp', $funcNative));
+		$this->assertSame(10, has_action('init', $funcNative));
 	}
 
-	public function testAddFilterGroup(): void
+	public function testRemoveAllFilters(): void
 	{
-		$func = static function ($value) {
-			return $value;
+		$hook = new Hook();
+		$func = static function ($value): void {
 		};
 
-		$hook = new Hook('tests-group-filter');
+		$funcNative = static function ($value): void {
+		};
 
-		// No-run.
+		add_filter('the_content', $funcNative);
+		add_filter('all_plugins', $funcNative);
+
 		$hook->addFilter('the_content', $func);
-		$this->assertFalse(has_filter('the_content', $func));
-
-		// Run.
 		$hook->addFilter('all_plugins', $func);
 		$hook->run();
 
-		$actual = has_filter('all_plugins', $func);
-		$expect = 10;
+		$this->assertSame(10, has_filter('the_content', $func));
+		$this->assertSame(10, has_filter('all_plugins', $func));
+		$this->assertSame(10, has_filter('the_content', $funcNative));
+		$this->assertSame(10, has_filter('all_plugins', $funcNative));
 
-		$this->assertSame($expect, $actual);
+		$hook->removeAllActions(); // This method should not de-register all filters.
+
+		$this->assertSame(10, has_filter('the_content', $func));
+		$this->assertSame(10, has_filter('all_plugins', $func));
+		$this->assertSame(10, has_filter('the_content', $funcNative));
+		$this->assertSame(10, has_filter('all_plugins', $funcNative));
+
+		$hook->removeAllFilters();
+
+		$this->assertFalse(has_filter('the_content', $func));
+		$this->assertFalse(has_filter('all_plugins', $func));
+		$this->assertSame(10, has_filter('the_content', $funcNative));
+		$this->assertSame(10, has_filter('all_plugins', $funcNative));
 	}
 }
