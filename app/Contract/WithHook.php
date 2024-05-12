@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WP\Hook\Contract;
+namespace Syntatis\WPHook\Contract;
 
-use Syntatis\WP\Hook\Hook;
+use Syntatis\WPHook\Hook;
 
 interface WithHook
 {

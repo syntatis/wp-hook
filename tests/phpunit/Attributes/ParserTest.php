@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WP\Hook\Tests\Attributes;
+namespace Syntatis\WPHook\Tests\Attributes;
 
-use Syntatis\WP\Hook\Action;
-use Syntatis\WP\Hook\Contract\WithHook;
-use Syntatis\WP\Hook\Filter;
-use Syntatis\WP\Hook\Hook;
-use Syntatis\WP\Hook\Tests\TestCase;
+use Syntatis\WPHook\Action;
+use Syntatis\WPHook\Contract\WithHook;
+use Syntatis\WPHook\Filter;
+use Syntatis\WPHook\Hook;
+use Syntatis\WPHook\Tests\TestCase;
 
 use function array_key_first;
 

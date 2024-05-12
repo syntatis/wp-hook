@@ -19,16 +19,17 @@
 	],
 	"autoload": {
 		"psr-4": {
-			"Syntatis\\WP\\Hook\\": "app/"
+			"Syntatis\\WPHook\\": "app/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Syntatis\\WP\\Hook\\Tests\\": "tests/phpunit/"
+			"Syntatis\\WPHook\\Tests\\": "tests/phpunit/"
 		}
 	},
 	"require": {
-		"php": "^7.4 || ^8.0"
+		"php": "^7.4 || ^8.0",
+		"syntatis/utils": "^1.0"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
@@ -37,6 +38,7 @@
 		"phpstan/phpstan": "^1.10",
 		"phpunit/phpunit": "^9.6",
 		"roots/wordpress": "^6.5",
+		"symfony/var-dumper": "^5.4",
 		"syntatis/coding-standard": "^1.1",
 		"szepeviktor/phpstan-wordpress": "^1.3",
 		"wp-phpunit/wp-phpunit": "^6.5",

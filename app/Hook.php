@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WP\Hook;
+namespace Syntatis\WPHook;
 
-use Syntatis\WP\Hook\Attributes\Parser;
+use Syntatis\WPHook\Attributes\Parser;
 
 /**
  * Register all actions and filters for the plugin.
@@ -98,5 +98,19 @@ final class Hook
 	public function annotated(object $obj): void
 	{
 		new Parser($obj, $this);
+	}
+
+	public function removeAllActions(): void
+	{
+		foreach ($this->actions as $hook) {
+			remove_action($hook['hook'], $hook['callback'], $hook['priority']);
+		}
+	}
+
+	public function removeAllFilters(?string $group = null): void
+	{
+		foreach ($this->filters as $hook) {
+			remove_filter($hook['hook'], $hook['callback'], $hook['priority']);
+		}
 	}
 }

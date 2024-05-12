@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WP\Hook\Attributes;
+namespace Syntatis\WPHook\Attributes;
 
 abstract class Model
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WP\Hook;
+namespace Syntatis\WPHook;
 
 use Attribute;
-use Syntatis\WP\Hook\Attributes\Model;
+use Syntatis\WPHook\Attributes\Model;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
 class Filter extends Model

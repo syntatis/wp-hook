@@ -2,35 +2,28 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WP\Hook\Tests;
+namespace Syntatis\WPHook\Tests;
 
 use ArgumentCountError;
-use Syntatis\WP\Hook\Hook;
+use Syntatis\WPHook\Hook;
 
 class HookTest extends TestCase
 {
-	private Hook $instance;
-
-	public function setUp(): void
-	{
-		parent::setUp();
-
-		$this->instance = new Hook();
-	}
-
 	public function testAddAction(): void
 	{
 		$func = static function (): bool {
 			return true;
 		};
 
+		$hook = new Hook();
+
 		// No-run.
-		$this->instance->addAction('wp', $func);
+		$hook->addAction('wp', $func);
 		$this->assertFalse(has_action('wp', $func));
 
 		// Run.
-		$this->instance->addAction('init', $func);
-		$this->instance->run();
+		$hook->addAction('init', $func);
+		$hook->run();
 
 		$actual = has_action('init', $func);
 		$expect = 10;
@@ -44,8 +37,10 @@ class HookTest extends TestCase
 			return true;
 		};
 
-		$this->instance->addAction('init', $func, 100);
-		$this->instance->run();
+		$hook = new Hook();
+
+		$hook->addAction('init', $func, 100);
+		$hook->run();
 
 		$actual = has_action('init', $func);
 		$expect = 100;
@@ -55,15 +50,17 @@ class HookTest extends TestCase
 
 	public function testAddActionAcceptedArgs(): void
 	{
-		$this->instance->addAction('auth_cookie_malformed', static function ($cookie, $scheme): void {
+		$hook = new Hook();
+
+		$hook->addAction('auth_cookie_malformed', static function ($cookie, $scheme): void {
 		}, 100, 2);
-		$this->instance->run();
+		$hook->run();
 
 		do_action('auth_cookie_malformed', '123', 'auth');
 
-		$this->instance->addAction('auth_cookie_malformed', static function ($cookie, $scheme): void {
+		$hook->addAction('auth_cookie_malformed', static function ($cookie, $scheme): void {
 		}, 100);
-		$this->instance->run();
+		$hook->run();
 
 		$this->expectException(ArgumentCountError::class);
 		do_action('auth_cookie_malformed', '123', 'auth');
@@ -75,13 +72,15 @@ class HookTest extends TestCase
 			return $value;
 		};
 
+		$hook = new Hook();
+
 		// No-run.
-		$this->instance->addFilter('the_content', $func);
+		$hook->addFilter('the_content', $func);
 		$this->assertFalse(has_filter('the_content', $func));
 
 		// Run.
-		$this->instance->addFilter('all_plugins', $func);
-		$this->instance->run();
+		$hook->addFilter('all_plugins', $func);
+		$hook->run();
 
 		$actual = has_filter('all_plugins', $func);
 		$expect = 10;
@@ -95,9 +94,11 @@ class HookTest extends TestCase
 			return $value;
 		};
 
+		$hook = new Hook();
+
 		// Run.
-		$this->instance->addFilter('all_plugins', $func, 100);
-		$this->instance->run();
+		$hook->addFilter('all_plugins', $func, 100);
+		$hook->run();
 
 		$actual = has_filter('all_plugins', $func);
 		$expect = 100;
@@ -107,20 +108,94 @@ class HookTest extends TestCase
 
 	public function testAddFilterAcceptedArgs(): void
 	{
-		$this->instance->addFilter('allow_empty_comment', static function ($allowEmptyComment, $commentData) {
+		$hook = new Hook();
+
+		$hook->addFilter('allow_empty_comment', static function ($allowEmptyComment, $commentData) {
 			return $allowEmptyComment;
 		}, 100, 2);
-		$this->instance->run();
+		$hook->run();
 
 		apply_filters('allow_empty_comment', false, []);
 
-		$this->instance->addFilter('allow_empty_comment', static function ($allowEmptyComment, $commentData) {
+		$hook->addFilter('allow_empty_comment', static function ($allowEmptyComment, $commentData) {
 			return $allowEmptyComment;
 		}, 100);
 
-		$this->instance->run();
+		$hook->run();
 
 		$this->expectException(ArgumentCountError::class);
 		apply_filters('allow_empty_comment', false, []);
+	}
+
+	public function testRemoveAllActions(): void
+	{
+		$hook = new Hook();
+		$func = static function ($value): void {
+		};
+
+		$funcNative = static function ($value): void {
+		};
+
+		add_action('wp', $funcNative);
+		add_action('init', $funcNative);
+
+		$hook->addAction('wp', $func);
+		$hook->addAction('init', $func);
+		$hook->run();
+
+		$this->assertSame(10, has_action('wp', $func));
+		$this->assertSame(10, has_action('init', $func));
+		$this->assertSame(10, has_action('wp', $funcNative));
+		$this->assertSame(10, has_action('init', $funcNative));
+
+		$hook->removeAllFilters(); // These methods should de-register all actions.
+
+		$this->assertSame(10, has_action('wp', $func));
+		$this->assertSame(10, has_action('init', $func));
+		$this->assertSame(10, has_action('wp', $funcNative));
+		$this->assertSame(10, has_action('init', $funcNative));
+
+		$hook->removeAllActions();
+
+		$this->assertFalse(has_action('wp', $func));
+		$this->assertFalse(has_action('init', $func));
+		$this->assertSame(10, has_action('wp', $funcNative));
+		$this->assertSame(10, has_action('init', $funcNative));
+	}
+
+	public function testRemoveAllFilters(): void
+	{
+		$hook = new Hook();
+		$func = static function ($value): void {
+		};
+
+		$funcNative = static function ($value): void {
+		};
+
+		add_filter('the_content', $funcNative);
+		add_filter('all_plugins', $funcNative);
+
+		$hook->addFilter('the_content', $func);
+		$hook->addFilter('all_plugins', $func);
+		$hook->run();
+
+		$this->assertSame(10, has_filter('the_content', $func));
+		$this->assertSame(10, has_filter('all_plugins', $func));
+		$this->assertSame(10, has_filter('the_content', $funcNative));
+		$this->assertSame(10, has_filter('all_plugins', $funcNative));
+
+		$hook->removeAllActions(); // This method should not de-register all filters.
+
+		$this->assertSame(10, has_filter('the_content', $func));
+		$this->assertSame(10, has_filter('all_plugins', $func));
+		$this->assertSame(10, has_filter('the_content', $funcNative));
+		$this->assertSame(10, has_filter('all_plugins', $funcNative));
+
+		$hook->removeAllFilters();
+
+		$this->assertFalse(has_filter('the_content', $func));
+		$this->assertFalse(has_filter('all_plugins', $func));
+		$this->assertSame(10, has_filter('the_content', $funcNative));
+		$this->assertSame(10, has_filter('all_plugins', $funcNative));
 	}
 }
