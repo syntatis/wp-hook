@@ -52,12 +52,14 @@ class HookTest extends TestCase
 	{
 		$hook = new Hook();
 
-		$hook->addAction('auth_cookie_malformed', static function ($cookie, $scheme): void {}, 100, 2);
+		$hook->addAction('auth_cookie_malformed', static function ($cookie, $scheme): void {
+		}, 100, 2);
 		$hook->run();
 
 		do_action('auth_cookie_malformed', '123', 'auth');
 
-		$hook->addAction('auth_cookie_malformed', static function ($cookie, $scheme): void {}, 100);
+		$hook->addAction('auth_cookie_malformed', static function ($cookie, $scheme): void {
+		}, 100);
 		$hook->run();
 
 		$this->expectException(ArgumentCountError::class);
