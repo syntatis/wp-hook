@@ -71,14 +71,14 @@ jobs:
           key: php-${{ matrix.php }}-ext
 
       - name: Setup PHP extensions cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.php-ext-cache.outputs.dir }}
           key: ${{ steps.php-ext-cache.outputs.key }}
           restore-keys: ${{ steps.php-ext-cache.outputs.key }}
 
       - name: Setup Composer cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
           key: php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.json') }}
@@ -106,6 +106,6 @@ jobs:
           WP_ENVIRONMENT_TYPE: development
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
