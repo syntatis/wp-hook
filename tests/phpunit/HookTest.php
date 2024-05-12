@@ -124,4 +124,48 @@ class HookTest extends TestCase
 		$this->expectException(ArgumentCountError::class);
 		apply_filters('allow_empty_comment', false, []);
 	}
+
+	public function testAddActionGroup(): void
+	{
+		$func = static function (): bool {
+			return true;
+		};
+
+		$hook = new Hook('tests-group-action');
+
+		// No-run.
+		$hook->addAction('wp', $func);
+		$this->assertFalse(has_action('wp', $func));
+
+		// Run.
+		$hook->addAction('init', $func);
+		$hook->run();
+
+		$actual = has_action('init', $func);
+		$expect = 10;
+
+		$this->assertSame($expect, $actual);
+	}
+
+	public function testAddFilterGroup(): void
+	{
+		$func = static function ($value) {
+			return $value;
+		};
+
+		$hook = new Hook('tests-group-filter');
+
+		// No-run.
+		$hook->addFilter('the_content', $func);
+		$this->assertFalse(has_filter('the_content', $func));
+
+		// Run.
+		$hook->addFilter('all_plugins', $func);
+		$hook->run();
+
+		$actual = has_filter('all_plugins', $func);
+		$expect = 10;
+
+		$this->assertSame($expect, $actual);
+	}
 }
