@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WP\Hook\Tests;
+namespace Syntatis\WPHook\Tests;
 
 use ArgumentCountError;
-use Syntatis\WP\Hook\Hook;
+use Syntatis\WPHook\Hook;
 
 class HookTest extends TestCase
 {

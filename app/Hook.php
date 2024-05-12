@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WP\Hook;
+namespace Syntatis\WPHook;
 
-use Syntatis\WP\Hook\Attributes\Parser;
+use Syntatis\WPHook\Attributes\Parser;
 
 /**
  * Register all actions and filters for the plugin.

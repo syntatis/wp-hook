@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WP\Hook\Attributes;
+namespace Syntatis\WPHook\Attributes;
 
 use ReflectionClass;
-use Syntatis\WP\Hook\Action;
-use Syntatis\WP\Hook\Filter;
-use Syntatis\WP\Hook\Hook;
+use Syntatis\WPHook\Action;
+use Syntatis\WPHook\Filter;
+use Syntatis\WPHook\Hook;
 
 use function is_callable;
 

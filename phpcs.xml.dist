@@ -26,8 +26,8 @@
 	<rule ref="SlevomatCodingStandard.Files.TypeNameMatchesFileName">
 		<properties>
 			<property name="rootNamespaces" type="array">
-				<element key="app" value="Syntatis\WP\Hook"/>
-				<element key="tests/phpunit" value="Syntatis\WP\Hook\Tests"/>
+				<element key="app" value="Syntatis\WPHook"/>
+				<element key="tests/phpunit" value="Syntatis\WPHook\Tests"/>
 			</property>
 		</properties>
 	</rule>

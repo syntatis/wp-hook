@@ -19,12 +19,12 @@
 	],
 	"autoload": {
 		"psr-4": {
-			"Syntatis\\WP\\Hook\\": "app/"
+			"Syntatis\\WPHook\\": "app/"
 		}
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"Syntatis\\WP\\Hook\\Tests\\": "tests/phpunit/"
+			"Syntatis\\WPHook\\Tests\\": "tests/phpunit/"
 		}
 	},
 	"require": {

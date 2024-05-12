@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WP\Hook;
+namespace Syntatis\WPHook;
 
 use Attribute;
 

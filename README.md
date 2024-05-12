@@ -40,7 +40,7 @@ composer require syntatis/wp-hook
 ## Usage
 
 ```php
-use Syntatis\WP\Hook\Hook;
+use Syntatis\WPHook\Hook;
 
 $hook = new Hook();
 $hook->addAction( 'init', 'initialise' );
@@ -51,9 +51,9 @@ $hook->run();
 If your WordPress theme or plugin is using PHP 8.0, you can use [PHP Attributes](https://www.php.net/manual/en/language.attributes.overview.php) to add the hooks.
 
 ```php
-use Syntatis\WP\Hook\Action;
-use Syntatis\WP\Hook\Filter;
-use Syntatis\WP\Hook\Hook;
+use Syntatis\WPHook\Action;
+use Syntatis\WPHook\Filter;
+use Syntatis\WPHook\Hook;
 
 #[Action(tag: "wp")]
 class HelloWorld
