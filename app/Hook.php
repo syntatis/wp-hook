@@ -6,6 +6,8 @@ namespace Syntatis\WPHook;
 
 use Syntatis\WPHook\Attributes\Parser;
 
+use function Syntatis\Utils\is_blank;
+
 /**
  * Register all actions and filters for the plugin.
  *
@@ -30,6 +32,16 @@ final class Hook
 	 * @phpstan-var array<WPHook>
 	 */
 	private array $filters = [];
+
+	/**
+	 * Specify the group of hooks to register.
+	 */
+	private ?string $group = null;
+
+	public function __construct(?string $group = null)
+	{
+		$this->group = $group;
+	}
 
 	/**
 	 * Add a new action to the collection to be registered with WordPress.
@@ -62,12 +74,16 @@ final class Hook
 	 */
 	public function run(): void
 	{
-		foreach ($this->filters as $hook) {
-			add_filter($hook['hook'], $hook['callback'], $hook['priority'], $hook['accepted_args']);
+		foreach ($this->filters as $group => $hooks) {
+			foreach ($hooks as $hook) {
+				add_filter($hook['hook'], $hook['callback'], $hook['priority'], $hook['accepted_args']);
+			}
 		}
 
-		foreach ($this->actions as $hook) {
-			add_action($hook['hook'], $hook['callback'], $hook['priority'], $hook['accepted_args']);
+		foreach ($this->actions as $group => $hooks) {
+			foreach ($hooks as $hook) {
+				add_action($hook['hook'], $hook['callback'], $hook['priority'], $hook['accepted_args']);
+			}
 		}
 	}
 
@@ -85,12 +101,21 @@ final class Hook
 	 */
 	private function add(array $hooks, string $hook, callable $callback, int $priority, int $acceptedArgs): array
 	{
-		$hooks[] = [
-			'accepted_args' => $acceptedArgs,
-			'callback' => $callback,
-			'hook' => $hook,
-			'priority' => $priority,
-		];
+		if (is_blank($this->group)) {
+			$hooks['__syntatis'][] = [
+				'accepted_args' => $acceptedArgs,
+				'callback' => $callback,
+				'hook' => $hook,
+				'priority' => $priority,
+			];
+		} else {
+			$hooks[$this->group][] = [
+				'accepted_args' => $acceptedArgs,
+				'callback' => $callback,
+				'hook' => $hook,
+				'priority' => $priority,
+			];
+		}
 
 		return $hooks;
 	}
