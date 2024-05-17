@@ -55,16 +55,16 @@ use Syntatis\WPHook\Action;
 use Syntatis\WPHook\Filter;
 use Syntatis\WPHook\Hook;
 
-#[Action(tag: "wp")]
+#[Action(name: "wp")]
 class HelloWorld
 {
-    #[Action(tag: "init")]
+    #[Action(name: "init")]
     public function initialise(): void
     {
       echo 'initialise';
     }
 
-    #[Filter(tag: "the_content", priority: 100)]
+    #[Filter(name: "the_content", priority: 100)]
     public function content(string $content): string
     {
       return $content . "\ncontent";
