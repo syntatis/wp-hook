@@ -44,7 +44,8 @@ use Syntatis\WPHook\Hook;
 
 $hook = new Hook();
 $hook->addAction( 'init', 'initialise' );
-$hook->addFilter( 'the_content', 'hello_world', 100 );
+$hook->addFilter( 'the_content', 'content', 100 );
+$hook->addAction( 'add_option', 'option', 100, 2 );
 $hook->register();
 ```
 
@@ -68,6 +69,12 @@ class HelloWorld
     public function content(string $content): string
     {
       return $content . "\ncontent";
+    }
+
+    #[Action(name: "the_content", priority: 100, acceptedArgs: 2)]
+    public function option(string $optionName, mixed $value): void
+    {
+      echo $optionName . $value;
     }
 
     public function __invoke(): void
