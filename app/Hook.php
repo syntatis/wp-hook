@@ -71,6 +71,22 @@ final class Hook
 		}
 	}
 
+	public function unregister(): void
+	{
+		foreach ($this->actions as $hook) {
+			remove_action($hook['hook'], $hook['callback'], $hook['priority']);
+		}
+
+		foreach ($this->filters as $hook) {
+			remove_filter($hook['hook'], $hook['callback'], $hook['priority']);
+		}
+	}
+
+	public function annotated(object $obj): void
+	{
+		new Parser($obj, $this);
+	}
+
 	/**
 	 * A utility function that is used to register the actions and hooks into a single
 	 * collection.
@@ -93,24 +109,5 @@ final class Hook
 		];
 
 		return $hooks;
-	}
-
-	public function annotated(object $obj): void
-	{
-		new Parser($obj, $this);
-	}
-
-	public function removeAllActions(): void
-	{
-		foreach ($this->actions as $hook) {
-			remove_action($hook['hook'], $hook['callback'], $hook['priority']);
-		}
-	}
-
-	public function removeAllFilters(?string $group = null): void
-	{
-		foreach ($this->filters as $hook) {
-			remove_filter($hook['hook'], $hook['callback'], $hook['priority']);
-		}
 	}
 }
