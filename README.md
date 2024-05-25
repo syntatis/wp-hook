@@ -48,7 +48,7 @@ $hook->addFilter( 'the_content', 'hello_world', 100 );
 $hook->register();
 ```
 
-If your WordPress theme or plugin is using PHP 8.0, you can use [PHP Attributes](https://www.php.net/manual/en/language.attributes.overview.php) to add the hooks.
+If your WordPress theme or plugin runs on PHP 8.0 or later, you can use [PHP Attributes](https://www.php.net/manual/en/language.attributes.overview.php) to add the hooks.
 
 ```php
 use Syntatis\WPHook\Action;
