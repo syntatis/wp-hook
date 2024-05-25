@@ -44,8 +44,8 @@ use Syntatis\WPHook\Hook;
 
 $hook = new Hook();
 $hook->addAction( 'init', 'initialise' );
-$hook->addFilter( 'after_setup_theme', 'hello_world' );
-$hook->run();
+$hook->addFilter( 'the_content', 'hello_world', 100 );
+$hook->register();
 ```
 
 If your WordPress theme or plugin is using PHP 8.0, you can use [PHP Attributes](https://www.php.net/manual/en/language.attributes.overview.php) to add the hooks.
@@ -77,8 +77,8 @@ class HelloWorld
 }
 
 $hook = new Hook();
-$hook->annotated(new HelloWorld());
-$hook->run();
+$hook->parse(new HelloWorld());
+$hook->register();
 ```
 
 ## References
