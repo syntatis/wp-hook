@@ -12,7 +12,7 @@ use Syntatis\WPHook\Hook;
 use function array_key_first;
 
 /** @requires PHP 8.0 */
-class ParserTest extends TestCase
+class ParserTest extends WPTestCase
 {
 	public function testActionOnMethod(): void
 	{

@@ -7,7 +7,7 @@ namespace Syntatis\WPHook\Tests;
 use ArgumentCountError;
 use Syntatis\WPHook\Hook;
 
-class HookTest extends TestCase
+class HookTest extends WPTestCase
 {
 	public function testAddAction(): void
 	{
