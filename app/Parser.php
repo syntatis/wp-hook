@@ -28,6 +28,9 @@ final class Parser
 
 	private function parseClassAttrs(): void
 	{
+		/**
+		 * A callable object is a class with an __invoke method.
+		 */
 		if (! is_callable($this->obj)) {
 			return;
 		}
