@@ -90,7 +90,7 @@ final class Hook
 	 *
 	 * @param object $obj The object containing annotated hooks.
 	 */
-	public function annotated(object $obj): void
+	public function parse(object $obj): void
 	{
 		new Parser($obj, $this);
 	}
