@@ -72,7 +72,7 @@ final class Hook
 	/**
 	 * Unregister all actions and filters from WordPress.
 	 */
-	public function unregister(): void
+	public function deregister(): void
 	{
 		foreach ($this->actions as $hook) {
 			remove_action($hook['hook'], $hook['callback'], $hook['priority']);
