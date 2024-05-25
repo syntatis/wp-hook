@@ -12,22 +12,20 @@ use Syntatis\WPHook\Attributes\Parser;
  * It maintains a list of all hooks to be registered with the WordPress API.
  * Call the `register` method to execute the registration of these actions
  * and filters.
- *
- * @phpstan-type WPHook array{hook: string, callback: callable, priority: int, accepted_args: int}
  */
 final class Hook
 {
 	/**
 	 * The array of actions registered with WordPress.
 	 *
-	 * @phpstan-var array<WPHook>
+	 * @var array<array{hook:string,callback:callable,priority:int,accepted_args:int}>
 	 */
 	private array $actions = [];
 
 	/**
 	 * The array of filters registered with WordPress.
 	 *
-	 * @phpstan-var array<WPHook>
+	 * @var array<array{hook:string,callback:callable,priority:int,accepted_args:int}>
 	 */
 	private array $filters = [];
 
@@ -98,14 +96,12 @@ final class Hook
 	/**
 	 * Add a new hook (action or filter) to the collection.
 	 *
-	 * @param array    $hooks        The current collection of hooks.
-	 * @param string   $hook         The name of the hook being registered.
-	 * @param callable $callback     The function to be called when the hook is triggered.
-	 * @param int      $priority     The priority at which the function should be fired.
-	 * @param int      $acceptedArgs The number of arguments that should be passed to the callback.
-	 *
-	 * @phpstan-param array<WPHook> $hooks
-	 * @phpstan-return array<WPHook>
+	 * @param array<array{hook:string,callback:callable,priority:int,accepted_args:int}> $hooks        The current collection of hooks.
+	 * @param string                                                                     $hook         The name of the hook being registered.
+	 * @param callable                                                                   $callback     The function to be called when the hook is triggered.
+	 * @param int                                                                        $priority     The priority at which the function should be fired.
+	 * @param int                                                                        $acceptedArgs The number of arguments that should be passed to the callback.
+	 * @return array<array{hook:string,callback:callable,priority:int,accepted_args:int}>
 	 */
 	private function add(array $hooks, string $hook, callable $callback, int $priority, int $acceptedArgs): array
 	{
