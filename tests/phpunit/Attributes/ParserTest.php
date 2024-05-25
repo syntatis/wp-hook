@@ -22,7 +22,7 @@ class ParserTest extends TestCase
 			public function hook(Hook $hook): void
 			{
 				$hook->addAction('init', [$this, 'bar'], 124);
-				$hook->annotated($this);
+				$hook->parse($this);
 			}
 
 			public function bar(): void
@@ -37,7 +37,7 @@ class ParserTest extends TestCase
 
 		$hook = new Hook();
 		$hasActions->hook($hook);
-		$hook->run();
+		$hook->register();
 
 		$this->assertEquals(123, has_action('init', [$hasActions, 'foo']));
 		$this->assertEquals(124, has_action('init', [$hasActions, 'bar']));
@@ -62,7 +62,7 @@ class ParserTest extends TestCase
 			public function hook(Hook $hook): void
 			{
 				$hook->addFilter('the_content', [$this, 'bar'], 224);
-				$hook->annotated($this);
+				$hook->parse($this);
 			}
 
 			public function bar(): void
@@ -77,7 +77,7 @@ class ParserTest extends TestCase
 
 		$hook = new Hook();
 		$hasFilters->hook($hook);
-		$hook->run();
+		$hook->register();
 
 		$this->assertEquals(223, has_filter('the_content', [$hasFilters, 'foo']));
 		$this->assertEquals(224, has_filter('the_content', [$hasFilters, 'bar']));
@@ -99,8 +99,8 @@ class ParserTest extends TestCase
 	{
 		$foo = new Foo();
 		$hook = new Hook();
-		$hook->annotated($foo);
-		$hook->run();
+		$hook->parse($foo);
+		$hook->register();
 
 		$hooks = $GLOBALS['wp_filter']['init'][234];
 		$added = $hooks[array_key_first($hooks)];
@@ -113,8 +113,8 @@ class ParserTest extends TestCase
 	{
 		$bar = new Bar();
 		$hook = new Hook();
-		$hook->annotated($bar);
-		$hook->run();
+		$hook->parse($bar);
+		$hook->register();
 
 		$hooks = $GLOBALS['wp_filter']['the_title'][432];
 		$added = $hooks[array_key_first($hooks)];

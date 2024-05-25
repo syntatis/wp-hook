@@ -17,13 +17,13 @@ class HookTest extends TestCase
 
 		$hook = new Hook();
 
-		// No-run.
+		// No-register yet.
 		$hook->addAction('wp', $func);
 		$this->assertFalse(has_action('wp', $func));
 
-		// Run.
+		// Register.
 		$hook->addAction('init', $func);
-		$hook->run();
+		$hook->register();
 
 		$actual = has_action('init', $func);
 		$expect = 10;
@@ -40,7 +40,7 @@ class HookTest extends TestCase
 		$hook = new Hook();
 
 		$hook->addAction('init', $func, 100);
-		$hook->run();
+		$hook->register();
 
 		$actual = has_action('init', $func);
 		$expect = 100;
@@ -54,13 +54,13 @@ class HookTest extends TestCase
 
 		$hook->addAction('auth_cookie_malformed', static function ($cookie, $scheme): void {
 		}, 100, 2);
-		$hook->run();
+		$hook->register();
 
 		do_action('auth_cookie_malformed', '123', 'auth');
 
 		$hook->addAction('auth_cookie_malformed', static function ($cookie, $scheme): void {
 		}, 100);
-		$hook->run();
+		$hook->register();
 
 		$this->expectException(ArgumentCountError::class);
 		do_action('auth_cookie_malformed', '123', 'auth');
@@ -74,13 +74,13 @@ class HookTest extends TestCase
 
 		$hook = new Hook();
 
-		// No-run.
+		// No-register yet.
 		$hook->addFilter('the_content', $func);
 		$this->assertFalse(has_filter('the_content', $func));
 
-		// Run.
+		// Register.
 		$hook->addFilter('all_plugins', $func);
-		$hook->run();
+		$hook->register();
 
 		$actual = has_filter('all_plugins', $func);
 		$expect = 10;
@@ -96,9 +96,9 @@ class HookTest extends TestCase
 
 		$hook = new Hook();
 
-		// Run.
+		// Register.
 		$hook->addFilter('all_plugins', $func, 100);
-		$hook->run();
+		$hook->register();
 
 		$actual = has_filter('all_plugins', $func);
 		$expect = 100;
@@ -113,7 +113,7 @@ class HookTest extends TestCase
 		$hook->addFilter('allow_empty_comment', static function ($allowEmptyComment, $commentData) {
 			return $allowEmptyComment;
 		}, 100, 2);
-		$hook->run();
+		$hook->register();
 
 		apply_filters('allow_empty_comment', false, []);
 
@@ -121,81 +121,56 @@ class HookTest extends TestCase
 			return $allowEmptyComment;
 		}, 100);
 
-		$hook->run();
+		$hook->register();
 
 		$this->expectException(ArgumentCountError::class);
 		apply_filters('allow_empty_comment', false, []);
 	}
 
-	public function testRemoveAllActions(): void
+	public function testUnregister(): void
 	{
 		$hook = new Hook();
+
 		$func = static function ($value): void {
 		};
-
 		$funcNative = static function ($value): void {
 		};
 
 		add_action('wp', $funcNative);
 		add_action('init', $funcNative);
-
-		$hook->addAction('wp', $func);
-		$hook->addAction('init', $func);
-		$hook->run();
-
-		$this->assertSame(10, has_action('wp', $func));
-		$this->assertSame(10, has_action('init', $func));
-		$this->assertSame(10, has_action('wp', $funcNative));
-		$this->assertSame(10, has_action('init', $funcNative));
-
-		$hook->removeAllFilters(); // These methods should de-register all actions.
-
-		$this->assertSame(10, has_action('wp', $func));
-		$this->assertSame(10, has_action('init', $func));
-		$this->assertSame(10, has_action('wp', $funcNative));
-		$this->assertSame(10, has_action('init', $funcNative));
-
-		$hook->removeAllActions();
-
-		$this->assertFalse(has_action('wp', $func));
-		$this->assertFalse(has_action('init', $func));
-		$this->assertSame(10, has_action('wp', $funcNative));
-		$this->assertSame(10, has_action('init', $funcNative));
-	}
-
-	public function testRemoveAllFilters(): void
-	{
-		$hook = new Hook();
-		$func = static function ($value): void {
-		};
-
-		$funcNative = static function ($value): void {
-		};
-
 		add_filter('the_content', $funcNative);
 		add_filter('all_plugins', $funcNative);
 
+		$hook->addAction('wp', $func);
+		$hook->addAction('init', $func);
 		$hook->addFilter('the_content', $func);
 		$hook->addFilter('all_plugins', $func);
-		$hook->run();
+		$hook->register();
 
+		// Actions.
+		$this->assertSame(10, has_action('wp', $func));
+		$this->assertSame(10, has_action('init', $func));
+		$this->assertSame(10, has_action('wp', $funcNative));
+		$this->assertSame(10, has_action('init', $funcNative));
+
+		// Filters.
 		$this->assertSame(10, has_filter('the_content', $func));
 		$this->assertSame(10, has_filter('all_plugins', $func));
 		$this->assertSame(10, has_filter('the_content', $funcNative));
 		$this->assertSame(10, has_filter('all_plugins', $funcNative));
 
-		$hook->removeAllActions(); // This method should not de-register all filters.
+		$hook->unregister(); // These methods should de-register all actions and filters.
 
-		$this->assertSame(10, has_filter('the_content', $func));
-		$this->assertSame(10, has_filter('all_plugins', $func));
+		// List of actions and filters, added with `add_action` and `add_filter`.
+		$this->assertSame(10, has_action('wp', $funcNative));
+		$this->assertSame(10, has_action('init', $funcNative));
 		$this->assertSame(10, has_filter('the_content', $funcNative));
 		$this->assertSame(10, has_filter('all_plugins', $funcNative));
 
-		$hook->removeAllFilters();
-
+		// List of actions and filters, added with `addAction` and `addFilter` from `Hook`.
+		$this->assertFalse(has_action('wp', $func));
+		$this->assertFalse(has_action('init', $func));
 		$this->assertFalse(has_filter('the_content', $func));
 		$this->assertFalse(has_filter('all_plugins', $func));
-		$this->assertSame(10, has_filter('the_content', $funcNative));
-		$this->assertSame(10, has_filter('all_plugins', $funcNative));
 	}
 }
