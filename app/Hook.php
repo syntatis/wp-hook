@@ -56,7 +56,7 @@ final class Hook
 	}
 
 	/**
-	 * Register the filters and actions with WordPress.
+	 * Add the filters and actions in WordPress.
 	 */
 	public function register(): void
 	{
@@ -70,7 +70,7 @@ final class Hook
 	}
 
 	/**
-	 * Unregister all actions and filters from WordPress.
+	 * Remove all actions and filters from WordPress.
 	 */
 	public function deregister(): void
 	{
