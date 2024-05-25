@@ -60,7 +60,7 @@ final class Hook
 	/**
 	 * Register the filters and actions with WordPress.
 	 */
-	public function run(): void
+	public function register(): void
 	{
 		foreach ($this->filters as $hook) {
 			add_filter($hook['hook'], $hook['callback'], $hook['priority'], $hook['accepted_args']);
