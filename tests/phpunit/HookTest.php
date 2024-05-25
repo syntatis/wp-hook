@@ -159,7 +159,7 @@ class HookTest extends TestCase
 		$this->assertSame(10, has_filter('the_content', $funcNative));
 		$this->assertSame(10, has_filter('all_plugins', $funcNative));
 
-		$hook->unregister(); // These methods should de-register all actions and filters.
+		$hook->deregister(); // These methods should de-register all actions and filters.
 
 		// List of actions and filters, added with `add_action` and `add_filter`.
 		$this->assertSame(10, has_action('wp', $funcNative));
