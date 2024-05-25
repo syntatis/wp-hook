@@ -7,11 +7,11 @@ namespace Syntatis\WPHook;
 use Syntatis\WPHook\Attributes\Parser;
 
 /**
- * Register all actions and filters for the plugin.
+ * This class manages the registration of all actions and filters for the plugin.
  *
- * Maintain a list of all hooks that are registered throughout
- * the plugin, and register them with the WordPress API. Call the
- * run function to execute the list of actions and filters.
+ * It maintains a list of all hooks to be registered with the WordPress API.
+ * Call the `register` method to execute the registration of these actions
+ * and filters.
  *
  * @phpstan-type WPHook array{hook: string, callback: callable, priority: int, accepted_args: int}
  */
@@ -71,6 +71,9 @@ final class Hook
 		}
 	}
 
+	/**
+	 * Unregister all actions and filters from WordPress.
+	 */
 	public function unregister(): void
 	{
 		foreach ($this->actions as $hook) {
@@ -82,21 +85,26 @@ final class Hook
 		}
 	}
 
+	/**
+	 * Parse and register hooks annotated with attributes in the given object.
+	 *
+	 * @param object $obj The object containing annotated hooks.
+	 */
 	public function annotated(object $obj): void
 	{
 		new Parser($obj, $this);
 	}
 
 	/**
-	 * A utility function that is used to register the actions and hooks into a single
-	 * collection.
+	 * Add a new hook (action or filter) to the collection.
 	 *
-	 * @param string   $hook         The name of the WordPress filter that is being registered.
-	 * @param callable $callback     The name of the function to be called with hook.
+	 * @param array    $hooks        The current collection of hooks.
+	 * @param string   $hook         The name of the hook being registered.
+	 * @param callable $callback     The function to be called when the hook is triggered.
 	 * @param int      $priority     The priority at which the function should be fired.
-	 * @param int      $acceptedArgs The number of arguments that should be passed to the $callback.
+	 * @param int      $acceptedArgs The number of arguments that should be passed to the callback.
 	 *
-	 * @phpstan-param array<WPHook> $hooks The collection of hooks that is being registered (that is, actions or filters).
+	 * @phpstan-param array<WPHook> $hooks
 	 * @phpstan-return array<WPHook>
 	 */
 	private function add(array $hooks, string $hook, callable $callback, int $priority, int $acceptedArgs): array
