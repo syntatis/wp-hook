@@ -124,10 +124,11 @@ class HookTest extends WPTestCase
 		$hook->register();
 
 		$this->expectException(ArgumentCountError::class);
+
 		apply_filters('allow_empty_comment', false, []);
 	}
 
-	public function testUnregister(): void
+	public function testDeregister(): void
 	{
 		$hook = new Hook();
 
