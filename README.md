@@ -94,7 +94,7 @@ $hook->register();
 
 ### Deregistering Hooks
 
-You can also deregister hooks, which will remove all the hooks that have been registered in the `Hook` instance:
+You can also deregister hooks, which will remove all the actions and filters that have been registered in the `Hook` instance:
 
 ```php
 $hook = new Hook();
