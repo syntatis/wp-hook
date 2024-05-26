@@ -45,31 +45,29 @@ final class Parser implements WithHook
 			return;
 		}
 
-		$classAttrs = $this->ref->getAttributes();
+		$actions = $this->ref->getAttributes(Action::class);
+		$filters = $this->ref->getAttributes(Filter::class);
 
-		foreach ($classAttrs as $classAttr) {
-			$instance = $classAttr->newInstance();
+		foreach ($actions as $action) {
+			$instance = $action->newInstance();
 
-			if ($instance instanceof Action) {
-				$this->hook->addAction(
-					$instance->getName(),
-					$this->obj,
-					$instance->getPriority(),
-					$instance->getAcceptedArgs(),
-				);
+			$this->hook->addAction(
+				$instance->getName(),
+				$this->obj,
+				$instance->getPriority(),
+				$instance->getAcceptedArgs(),
+			);
+		}
 
-				continue;
-			}
+		foreach ($filters as $filter) {
+			$instance = $filter->newInstance();
 
-			if ($instance instanceof Filter) {
-				$this->hook->addFilter(
-					$instance->getName(),
-					$this->obj,
-					$instance->getPriority(),
-					$instance->getAcceptedArgs(),
-				);
-				continue;
-			}
+			$this->hook->addFilter(
+				$instance->getName(),
+				$this->obj,
+				$instance->getPriority(),
+				$instance->getAcceptedArgs(),
+			);
 		}
 	}
 
@@ -78,40 +76,39 @@ final class Parser implements WithHook
 		$methods = $this->ref->getMethods();
 
 		foreach ($methods as $method) {
-			$methodAttrs = $method->getAttributes();
-
-			if (! $methodAttrs) {
+			if (! $method->isPublic() && ! $method->isConstructor() && ! $method->isDestructor()) {
 				continue;
 			}
 
-			foreach ($methodAttrs as $methodAttr) {
-				$callback = [$this->obj, $method->getName()];
+			$callback = [$this->obj, $method->getName()];
 
-				if (! is_callable($callback)) {
-					continue;
-				}
+			if (! is_callable($callback)) {
+				continue;
+			}
 
-				$instance = $methodAttr->newInstance();
+			$actions = $method->getAttributes(Action::class);
+			$filters = $method->getAttributes(Filter::class);
 
-				if ($instance instanceof Action) {
-					$this->hook->addAction(
-						$instance->getName(),
-						$callback,
-						$instance->getPriority(),
-						$instance->getAcceptedArgs(),
-					);
-					continue;
-				}
+			foreach ($actions as $action) {
+				$instance = $action->newInstance();
 
-				if ($instance instanceof Filter) {
-					$this->hook->addFilter(
-						$instance->getName(),
-						$callback,
-						$instance->getPriority(),
-						$instance->getAcceptedArgs(),
-					);
-					continue;
-				}
+				$this->hook->addAction(
+					$instance->getName(),
+					$callback,
+					$instance->getPriority(),
+					$instance->getAcceptedArgs(),
+				);
+			}
+
+			foreach ($filters as $filter) {
+				$instance = $filter->newInstance();
+
+				$this->hook->addFilter(
+					$instance->getName(),
+					$callback,
+					$instance->getPriority(),
+					$instance->getAcceptedArgs(),
+				);
 			}
 		}
 	}
