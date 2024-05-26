@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Syntatis\WPHook;
 
 use ReflectionClass;
+use Syntatis\WPHook\Contract\WithHook;
 
 use function is_callable;
 
-final class Parser
+/** @internal */
+final class Parser implements WithHook
 {
 	private Hook $hook;
 
@@ -16,12 +18,19 @@ final class Parser
 
 	private ReflectionClass $ref;
 
-	public function __construct(object $obj, Hook $hook)
+	public function __construct(object $obj)
 	{
-		$this->hook = $hook;
 		$this->obj = $obj;
 		$this->ref = new ReflectionClass($this->obj);
+	}
 
+	public function hook(Hook $hook): void
+	{
+		$this->hook = $hook;
+	}
+
+	public function parse(): void
+	{
 		$this->parseClassAttrs();
 		$this->parseMethodAttrs();
 	}

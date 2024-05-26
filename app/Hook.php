@@ -88,7 +88,9 @@ final class Hook
 	 */
 	public function parse(object $obj): void
 	{
-		new Parser($obj, $this);
+		$parser = new Parser($obj);
+		$parser->hook($this);
+		$parser->parse();
 	}
 
 	/**
