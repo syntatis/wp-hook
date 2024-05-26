@@ -16,6 +16,7 @@ final class Parser implements WithHook
 
 	private object $obj;
 
+	// @phpstan-ignore-next-line
 	private ReflectionClass $ref;
 
 	public function __construct(object $obj)
