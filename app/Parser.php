@@ -77,7 +77,7 @@ final class Parser implements WithHook
 		$methods = $this->ref->getMethods();
 
 		foreach ($methods as $method) {
-			if (! $method->isPublic()) {
+			if (! $method->isPublic() || $method->isAbstract()) {
 				continue;
 			}
 
