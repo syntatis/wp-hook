@@ -5,7 +5,6 @@
 		"wordpress",
 		"action",
 		"filter",
-		"hook",
 		"object-oriented"
 	],
 	"homepage": "https://github.com/syntatis/wp-hook",
@@ -28,7 +27,7 @@
 		}
 	},
 	"require": {
-		"php": "^7.4 || ^8.0"
+		"php": ">=7.4"
 	},
 	"require-dev": {
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",

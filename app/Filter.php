@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Syntatis\WPHook;
 
 use Attribute;
-use Syntatis\WPHook\Attributes\Model;
 
 #[Attribute(Attribute::TARGET_METHOD | Attribute::TARGET_CLASS | Attribute::IS_REPEATABLE)]
-class Filter extends Model
+class Filter
 {
 	/**
 	 * The WordPress hook name.
@@ -30,5 +29,20 @@ class Filter extends Model
 		$this->name = $name;
 		$this->priority = $priority;
 		$this->acceptedArgs = $acceptedArgs;
+	}
+
+	public function getName(): string
+	{
+		return $this->name;
+	}
+
+	public function getPriority(): int
+	{
+		return $this->priority;
+	}
+
+	public function getAcceptedArgs(): int
+	{
+		return $this->acceptedArgs;
 	}
 }
