@@ -8,6 +8,7 @@ use ReflectionClass;
 use Syntatis\WPHook\Contract\WithHook;
 
 use function is_callable;
+use function str_starts_with;
 
 /** @internal */
 final class Parser implements WithHook
@@ -76,7 +77,11 @@ final class Parser implements WithHook
 		$methods = $this->ref->getMethods();
 
 		foreach ($methods as $method) {
-			if (! $method->isPublic() && ! $method->isConstructor() && ! $method->isDestructor()) {
+			if (! $method->isPublic()) {
+				continue;
+			}
+
+			if ($method->isConstructor() || $method->isDestructor() || str_starts_with($method->getName(), '__')) {
 				continue;
 			}
 

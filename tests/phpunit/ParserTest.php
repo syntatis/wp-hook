@@ -14,6 +14,25 @@ use function array_key_first;
 /** @requires PHP 8.0 */
 class ParserTest extends WPTestCase
 {
+	/** @var array<mixed> */
+	private static array $wpFilter;
+
+	// phpcs:ignore -- Upstream convention.
+	public function set_up(): void
+	{
+		parent::set_up();
+
+		self::$wpFilter = $GLOBALS['wp_filter'];
+	}
+
+	// phpcs:ignore -- Upstream convention.
+	public function tear_down(): void
+	{
+		$GLOBALS['wp_filter'] = self::$wpFilter;
+
+		parent::tear_down();
+	}
+
 	public function testActionOnMethod(): void
 	{
 		$hasActions = new class implements WithHook
@@ -121,6 +140,46 @@ class ParserTest extends WPTestCase
 		$this->assertIsCallable($added['function']);
 		$this->assertEquals(1, $added['accepted_args']);
 	}
+
+	public function testWithConstructor(): void
+	{
+		$instance = new WithConstructor();
+		$hook = new Hook();
+		$hook->parse($instance);
+		$hook->register();
+
+		$this->assertFalse(isset($GLOBALS['wp_filter']['muplugins_loaded'][100]));
+	}
+
+	public function testWithDestructor(): void
+	{
+		$instance = new WithDestructor();
+		$hook = new Hook();
+		$hook->parse($instance);
+		$hook->register();
+
+		$this->assertFalse(isset($GLOBALS['wp_filter']['setup_theme'][123]));
+	}
+
+	public function testWithPrivateMethod(): void
+	{
+		$instance = new WithPrivateMethod();
+		$hook = new Hook();
+		$hook->parse($instance);
+		$hook->register();
+
+		$this->assertFalse(isset($GLOBALS['wp_filter']['admin_bar_init'][99]));
+	}
+
+	public function testWithDoubleDashedMethod(): void
+	{
+		$instance = new WithDoubleDashed();
+		$hook = new Hook();
+		$hook->parse($instance);
+		$hook->register();
+
+		$this->assertFalse(isset($GLOBALS['wp_filter']['wp_loaded'][345]));
+	}
 }
 
 // phpcs:disable
@@ -138,5 +197,41 @@ class Bar
 	public function __invoke(): string
 	{
 		return '';
+	}
+}
+
+class WithConstructor
+{
+	#[Action(name: 'muplugins_loaded', priority: 100)]
+	public function __construct()
+	{
+
+	}
+}
+
+class WithDestructor
+{
+	#[Action(name: 'setup_theme', priority: 123)]
+	public function __destruct()
+	{
+
+	}
+}
+
+class WithDoubleDashed
+{
+	#[Action(name: 'wp_loaded', priority: 345)]
+	public static function __callStatic(mixed $name, mixed $arguments)
+	{
+
+	}
+}
+
+class WithPrivateMethod
+{
+	#[Action(name: 'admin_bar_init', priority: 99)]
+	private function foo()
+	{
+
 	}
 }
