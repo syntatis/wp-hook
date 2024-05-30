@@ -92,6 +92,10 @@ $hook->parse(new HelloWorld());
 $hook->register();
 ```
 
+> [!NOTE]
+> Attributes will only be applied to public methods that are not PHP native methods or any methods that begin with `__` like `__constructor`, `__clone`.
+> It will also will not be applied to method that are marked as abstract.
+
 ### Deregistering Hooks
 
 You can also deregister hooks, which will remove all the actions and filters that have been registered in the `Hook` instance:
