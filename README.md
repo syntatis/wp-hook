@@ -93,8 +93,8 @@ $hook->register();
 ```
 
 > [!NOTE]
-> Attributes will only be applied to public methods that are not PHP native methods or any methods that begin with `__` like `__constructor`, `__clone`.
-> It will also will not be applied to method that are marked as abstract.
+> Attributes will only be applied to non-abstract public methods that are not PHP native methods or any methods that begin with `__` like `__constructor`, `__clone`, and `__callStatic`.
+> If you add the Attributes at the class level, the class should implement the `__invoke` method, as shown in the above example.
 
 ### Deregistering Hooks
 
