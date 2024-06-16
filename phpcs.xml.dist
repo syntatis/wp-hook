@@ -27,6 +27,7 @@
 		<properties>
 			<property name="rootNamespaces" type="array">
 				<element key="app" value="Syntatis\WPHook"/>
+				<element key="tests/app" value="Syntatis\WPHook\Tests"/>
 				<element key="tests/phpunit" value="Syntatis\WPHook\Tests"/>
 			</property>
 		</properties>
