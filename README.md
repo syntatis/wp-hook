@@ -7,6 +7,9 @@
 
 ---
 
+> [!CAUTION]
+> This package is currently in active development. Please be aware that there may be some changes as the package continue to evolve.
+
 A lightweight class wrapper designed to enable the use of WordPress hooks in an object-oriented manner. Inspired by the [WordPress Plugin Boilerplate](https://wppb.me/), this package introduces a cleaner syntax and enhanced features for managing hooks in your WordPress plugin or theme.
 
 ## Motivation
