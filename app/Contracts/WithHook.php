@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WPHook\Contract;
+namespace Syntatis\WPHook\Contracts;
 
 use Syntatis\WPHook\Hook;
 

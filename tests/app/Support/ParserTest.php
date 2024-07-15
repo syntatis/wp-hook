@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WPHook\Tests;
+namespace Syntatis\WPHook\Tests\Support;
 
 use Syntatis\WPHook\Action;
 use Syntatis\WPHook\Contract\WithHook;
 use Syntatis\WPHook\Filter;
 use Syntatis\WPHook\Hook;
+use Syntatis\WPHook\Tests\WPTestCase;
 
 use function array_key_first;
 

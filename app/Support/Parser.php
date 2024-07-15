@@ -2,10 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WPHook;
+namespace Syntatis\WPHook\Support;
 
 use ReflectionClass;
-use Syntatis\WPHook\Contract\WithHook;
+use Syntatis\WPHook\Action;
+use Syntatis\WPHook\Contracts\WithHook;
+use Syntatis\WPHook\Filter;
+use Syntatis\WPHook\Hook;
 
 use function is_callable;
 use function str_starts_with;
