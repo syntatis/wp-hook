@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Syntatis\WPHook;
 
+use Syntatis\WPHook\Support\Parser;
+
 /**
  * This class manages the registration of all actions and filters for the plugin.
  *
