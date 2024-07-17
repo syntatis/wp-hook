@@ -42,16 +42,16 @@ composer require syntatis/wp-hook
 
 ## Usage
 
-Create a new instance of the `Hook` class and register your hooks:
+Create a new instance of the `Registry` class and register your hooks:
 
 ```php
-use Syntatis\WPHook\Hook;
+use Syntatis\WPHook\Registry;
 
-$hook = new Hook();
-$hook->addAction('init', 'initialise');
-$hook->addFilter('the_content', 'content', 100);
-$hook->addAction('add_option', 'option', 100, 2);
-$hook->register();
+$registry = new Registry();
+$registry->addAction('init', 'initialise');
+$registry->addFilter('the_content', 'content', 100);
+$registry->addAction('add_option', 'option', 100, 2);
+$registry->register();
 ```
 
 ### Using PHP Attributes
@@ -61,7 +61,7 @@ If your theme or plugin runs on PHP 8.0 or later, you can leverage [PHP Attribut
 ```php
 use Syntatis\WPHook\Action;
 use Syntatis\WPHook\Filter;
-use Syntatis\WPHook\Hook;
+use Syntatis\WPHook\Registry;
 
 #[Action(name: "wp")]
 class HelloWorld
@@ -90,9 +90,9 @@ class HelloWorld
     }
 }
 
-$hook = new Hook();
-$hook->parse(new HelloWorld());
-$hook->register();
+$registry = new Registry();
+$registry->parse(new HelloWorld());
+$registry->register();
 ```
 
 > [!NOTE]
@@ -104,14 +104,13 @@ $hook->register();
 You can also deregister hooks, which will remove all the actions and filters that have been registered in the `Hook` instance:
 
 ```php
-$hook = new Hook();
-$hook->addAction('init', 'initialise');
-$hook->addFilter('the_content', 'content', 100);
-$hook->parse(new HelloWorld());
-$hook->register();
+$registry = new Registry();
+$registry->addAction('init', 'initialise');
+$registry->addFilter('the_content', 'content', 100);
+$registry->register();
 
 // ...later in the code...
-$hook->deregister();
+$registry->deregister();
 ```
 
 ## References

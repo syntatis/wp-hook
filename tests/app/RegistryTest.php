@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Syntatis\WPHook\Tests;
 
 use ArgumentCountError;
-use Syntatis\WPHook\Hook;
+use Syntatis\WPHook\Registry;
 
-class HookTest extends WPTestCase
+class RegistryTest extends WPTestCase
 {
 	public function testAddAction(): void
 	{
@@ -15,7 +15,7 @@ class HookTest extends WPTestCase
 			return true;
 		};
 
-		$hook = new Hook();
+		$hook = new Registry();
 
 		// No-register yet.
 		$hook->addAction('wp', $func);
@@ -37,7 +37,7 @@ class HookTest extends WPTestCase
 			return true;
 		};
 
-		$hook = new Hook();
+		$hook = new Registry();
 
 		$hook->addAction('init', $func, 100);
 		$hook->register();
@@ -50,7 +50,7 @@ class HookTest extends WPTestCase
 
 	public function testAddActionAcceptedArgs(): void
 	{
-		$hook = new Hook();
+		$hook = new Registry();
 
 		$hook->addAction('auth_cookie_malformed', static function ($cookie, $scheme): void {
 		}, 100, 2);
@@ -72,7 +72,7 @@ class HookTest extends WPTestCase
 			return $value;
 		};
 
-		$hook = new Hook();
+		$hook = new Registry();
 
 		// No-register yet.
 		$hook->addFilter('the_content', $func);
@@ -94,7 +94,7 @@ class HookTest extends WPTestCase
 			return $value;
 		};
 
-		$hook = new Hook();
+		$hook = new Registry();
 
 		// Register.
 		$hook->addFilter('all_plugins', $func, 100);
@@ -108,7 +108,7 @@ class HookTest extends WPTestCase
 
 	public function testAddFilterAcceptedArgs(): void
 	{
-		$hook = new Hook();
+		$hook = new Registry();
 
 		$hook->addFilter('allow_empty_comment', static function ($allowEmptyComment, $commentData) {
 			return $allowEmptyComment;
@@ -130,7 +130,7 @@ class HookTest extends WPTestCase
 
 	public function testDeregister(): void
 	{
-		$hook = new Hook();
+		$hook = new Registry();
 
 		$func = static function ($value): void {
 		};

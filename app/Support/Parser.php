@@ -2,18 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Syntatis\WPHook;
+namespace Syntatis\WPHook\Support;
 
 use ReflectionClass;
-use Syntatis\WPHook\Contract\WithHook;
+use Syntatis\WPHook\Action;
+use Syntatis\WPHook\Contracts\Hookable;
+use Syntatis\WPHook\Filter;
+use Syntatis\WPHook\Registry;
 
 use function is_callable;
 use function str_starts_with;
 
 /** @internal */
-final class Parser implements WithHook
+final class Parser implements Hookable
 {
-	private Hook $hook;
+	private Registry $registry;
 
 	private object $obj;
 
@@ -26,9 +29,9 @@ final class Parser implements WithHook
 		$this->ref = new ReflectionClass($this->obj);
 	}
 
-	public function hook(Hook $hook): void
+	public function hook(Registry $registry): void
 	{
-		$this->hook = $hook;
+		$this->registry = $registry;
 	}
 
 	public function parse(): void
@@ -52,7 +55,7 @@ final class Parser implements WithHook
 		foreach ($actions as $action) {
 			$instance = $action->newInstance();
 
-			$this->hook->addAction(
+			$this->registry->addAction(
 				$instance->getName(),
 				$this->obj,
 				$instance->getPriority(),
@@ -63,7 +66,7 @@ final class Parser implements WithHook
 		foreach ($filters as $filter) {
 			$instance = $filter->newInstance();
 
-			$this->hook->addFilter(
+			$this->registry->addFilter(
 				$instance->getName(),
 				$this->obj,
 				$instance->getPriority(),
@@ -97,7 +100,7 @@ final class Parser implements WithHook
 			foreach ($actions as $action) {
 				$instance = $action->newInstance();
 
-				$this->hook->addAction(
+				$this->registry->addAction(
 					$instance->getName(),
 					$callback,
 					$instance->getPriority(),
@@ -108,7 +111,7 @@ final class Parser implements WithHook
 			foreach ($filters as $filter) {
 				$instance = $filter->newInstance();
 
-				$this->hook->addFilter(
+				$this->registry->addFilter(
 					$instance->getName(),
 					$callback,
 					$instance->getPriority(),

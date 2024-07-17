@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Syntatis\WPHook;
 
+use Syntatis\WPHook\Support\Parser;
+
 /**
  * This class manages the registration of all actions and filters for the plugin.
  *
@@ -11,7 +13,7 @@ namespace Syntatis\WPHook;
  * Call the `register` method to execute the registration of these actions
  * and filters.
  */
-final class Hook
+final class Registry
 {
 	/**
 	 * The array of actions registered with WordPress.
