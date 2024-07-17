@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Syntatis\WPHook\Tests\Support;
 
 use Syntatis\WPHook\Action;
-use Syntatis\WPHook\Contract\WithHook;
+use Syntatis\WPHook\Contracts\Hookable;
 use Syntatis\WPHook\Filter;
-use Syntatis\WPHook\Hook;
+use Syntatis\WPHook\Registry;
 use Syntatis\WPHook\Tests\WPTestCase;
 
 use function array_key_first;
@@ -36,9 +36,9 @@ class ParserTest extends WPTestCase
 
 	public function testActionOnMethod(): void
 	{
-		$hasActions = new class implements WithHook
+		$hasActions = new class implements Hookable
 		{
-			public function hook(Hook $hook): void
+			public function hook(Registry $hook): void
 			{
 				$hook->addAction('init', [$this, 'bar'], 124);
 				$hook->parse($this);
@@ -54,7 +54,7 @@ class ParserTest extends WPTestCase
 			}
 		};
 
-		$hook = new Hook();
+		$hook = new Registry();
 		$hasActions->hook($hook);
 		$hook->register();
 
@@ -76,9 +76,9 @@ class ParserTest extends WPTestCase
 
 	public function testFilterOnMethod(): void
 	{
-		$hasFilters = new class implements WithHook
+		$hasFilters = new class implements Hookable
 		{
-			public function hook(Hook $hook): void
+			public function hook(Registry $hook): void
 			{
 				$hook->addFilter('the_content', [$this, 'bar'], 224);
 				$hook->parse($this);
@@ -94,7 +94,7 @@ class ParserTest extends WPTestCase
 			}
 		};
 
-		$hook = new Hook();
+		$hook = new Registry();
 		$hasFilters->hook($hook);
 		$hook->register();
 
@@ -117,7 +117,7 @@ class ParserTest extends WPTestCase
 	public function testActionOnClass(): void
 	{
 		$foo = new Foo();
-		$hook = new Hook();
+		$hook = new Registry();
 		$hook->parse($foo);
 		$hook->register();
 
@@ -131,7 +131,7 @@ class ParserTest extends WPTestCase
 	public function testFilterOnClass(): void
 	{
 		$bar = new Bar();
-		$hook = new Hook();
+		$hook = new Registry();
 		$hook->parse($bar);
 		$hook->register();
 
@@ -145,7 +145,7 @@ class ParserTest extends WPTestCase
 	public function testWithConstructor(): void
 	{
 		$instance = new WithConstructor();
-		$hook = new Hook();
+		$hook = new Registry();
 		$hook->parse($instance);
 		$hook->register();
 
@@ -155,7 +155,7 @@ class ParserTest extends WPTestCase
 	public function testWithDestructor(): void
 	{
 		$instance = new WithDestructor();
-		$hook = new Hook();
+		$hook = new Registry();
 		$hook->parse($instance);
 		$hook->register();
 
@@ -165,7 +165,7 @@ class ParserTest extends WPTestCase
 	public function testWithPrivateMethod(): void
 	{
 		$instance = new WithPrivateMethod();
-		$hook = new Hook();
+		$hook = new Registry();
 		$hook->parse($instance);
 		$hook->register();
 
@@ -175,7 +175,7 @@ class ParserTest extends WPTestCase
 	public function testWithDoubleDashedMethod(): void
 	{
 		$instance = new WithDoubleDashed();
-		$hook = new Hook();
+		$hook = new Registry();
 		$hook->parse($instance);
 		$hook->register();
 
