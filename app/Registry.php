@@ -11,7 +11,7 @@ namespace Syntatis\WPHook;
  * Call the `register` method to execute the registration of these actions
  * and filters.
  */
-final class Hook
+final class Registry
 {
 	/**
 	 * The array of actions registered with WordPress.
