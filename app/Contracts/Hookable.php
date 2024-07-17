@@ -11,5 +11,5 @@ interface Hookable
 	/**
 	 * Add WordPress hooks to run.
 	 */
-	public function hook(Registry $hook): void;
+	public function hook(Registry $registry): void;
 }
