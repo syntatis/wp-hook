@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Syntatis\WPHook\Contracts;
 
-use Syntatis\WPHook\Hook;
+use Syntatis\WPHook\Registry;
 
-interface WithHook
+interface Hookable
 {
 	/**
 	 * Add WordPress hooks to run.
 	 */
-	public function hook(Hook $hook): void;
+	public function hook(Registry $hook): void;
 }
