@@ -10,7 +10,7 @@
 > [!CAUTION]
 > This package is currently in active development. Please be aware that there may be some changes as the package continue to evolve.
 
-A class wrapper designed to use WordPress hooks with object-oriented programming (OOP), inspired from [WordPress Plugin Boilerplate](https://wppb.me/). This class helps you getting more organized and enforce structure when managing hooks in your WordPress plugin or theme.
+A class wrapper designed to use WordPress hooks with object-oriented programming (OOP), inspired by the [WordPress Plugin Boilerplate](https://wppb.me/). This class helps you stay organized and maintain structure when managing hooks in your WordPress plugin or theme.
 
 ## Installation
 
