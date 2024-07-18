@@ -10,27 +10,7 @@
 > [!CAUTION]
 > This package is currently in active development. Please be aware that there may be some changes as the package continue to evolve.
 
-A lightweight class wrapper designed to enable the use of WordPress hooks in an object-oriented manner. Inspired by the [WordPress Plugin Boilerplate](https://wppb.me/), this package introduces a cleaner syntax and enhanced features for managing hooks in your WordPress plugin or theme.
-
-## Motivation
-
-Managing a complex WordPress site often involves dealing with numerous hooks, which can quickly become unmanageable and prone to errors. A common issue is the nesting of hooks, which can lead to scenarios where certain hooks are never executed due to their initialization timing:
-
-```php
-add_action('init', 'initialise');
-
-function initialise(): void
-{
-    add_action('after_setup_theme', 'hello_world');
-}
-
-function hello_world(): void
-{
-    echo 'Hello World';
-}
-```
-
-In the above example, `hello_world` may never be executed if `after_setup_theme` has already been fired before the `init` hook. In extreme cases, such nested hooks can cause errors like [maximum function nesting level reached](https://wordpress.stackexchange.com/questions/147505/wp-insert-posts-fatal-error-maximum-function-nesting-level-of-100-reached-ab). This package aims to minimize these pitfalls by providing a more structured approach to managing hooks.
+A class wrapper designed to use WordPress hooks with object-oriented programming (OOP), inspired from [WordPress Plugin Boilerplate](https://wppb.me/). This class helps you getting more organized and enforce structure when managing hooks in your WordPress plugin or theme.
 
 ## Installation
 
