@@ -183,10 +183,6 @@ final class Registry
 		$atRef = '@' . $ref;
 
 		if ($namedRef !== $ref) {
-			if (isset($this->refs[$namedRef])) {
-				throw new RefExistsException($namedRef);
-			}
-
 			$this->refs[$namedRef] = $atRef;
 
 			if (isset($this->refs[$atRef])) {
@@ -195,10 +191,6 @@ final class Registry
 
 			$this->refs[$atRef] = $callback;
 		} else {
-			if ($this->refs[$ref]) {
-				throw new RefExistsException($ref);
-			}
-
 			$this->refs[$ref] = $callback;
 		}
 	}

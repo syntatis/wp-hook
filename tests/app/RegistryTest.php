@@ -300,6 +300,18 @@ class RegistryTest extends WPTestCase
 		$hook->removeFilter('get_the_archive_title', '@no-ret-false', 280);
 	}
 
+	/** @group with-ref */
+	public function testAddRefExists(): void
+	{
+		$hook = new Registry();
+		$hook->addFilter('get_the_archive_title', '__return_empty_string', 280, 1, ['ref' => 'ret-false']);
+
+		$this->assertSame(280, has_action('get_the_archive_title', '__return_empty_string'));
+
+		$this->expectException(RefNotFoundException::class);
+		$hook->removeFilter('get_the_archive_title', '@no-ret-false', 280);
+	}
+
 	public function testRemoveAll(): void
 	{
 		$hook = new Registry();
