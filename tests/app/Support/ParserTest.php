@@ -56,7 +56,6 @@ class ParserTest extends WPTestCase
 
 		$hook = new Registry();
 		$hasActions->hook($hook);
-		$hook->register();
 
 		$this->assertEquals(123, has_action('init', [$hasActions, 'foo']));
 		$this->assertEquals(124, has_action('init', [$hasActions, 'bar']));
@@ -96,7 +95,6 @@ class ParserTest extends WPTestCase
 
 		$hook = new Registry();
 		$hasFilters->hook($hook);
-		$hook->register();
 
 		$this->assertEquals(223, has_filter('the_content', [$hasFilters, 'foo']));
 		$this->assertEquals(224, has_filter('the_content', [$hasFilters, 'bar']));
@@ -119,7 +117,6 @@ class ParserTest extends WPTestCase
 		$foo = new Foo();
 		$hook = new Registry();
 		$hook->parse($foo);
-		$hook->register();
 
 		$hooks = $GLOBALS['wp_filter']['init'][234];
 		$added = $hooks[array_key_first($hooks)];
@@ -133,7 +130,6 @@ class ParserTest extends WPTestCase
 		$bar = new Bar();
 		$hook = new Registry();
 		$hook->parse($bar);
-		$hook->register();
 
 		$hooks = $GLOBALS['wp_filter']['the_title'][432];
 		$added = $hooks[array_key_first($hooks)];
@@ -147,7 +143,6 @@ class ParserTest extends WPTestCase
 		$instance = new WithConstructor();
 		$hook = new Registry();
 		$hook->parse($instance);
-		$hook->register();
 
 		$this->assertFalse(isset($GLOBALS['wp_filter']['muplugins_loaded'][100]));
 	}
@@ -157,7 +152,6 @@ class ParserTest extends WPTestCase
 		$instance = new WithDestructor();
 		$hook = new Registry();
 		$hook->parse($instance);
-		$hook->register();
 
 		$this->assertFalse(isset($GLOBALS['wp_filter']['setup_theme'][123]));
 	}
@@ -167,7 +161,6 @@ class ParserTest extends WPTestCase
 		$instance = new WithPrivateMethod();
 		$hook = new Registry();
 		$hook->parse($instance);
-		$hook->register();
 
 		$this->assertFalse(isset($GLOBALS['wp_filter']['admin_bar_init'][99]));
 	}
@@ -177,7 +170,6 @@ class ParserTest extends WPTestCase
 		$instance = new WithDoubleDashed();
 		$hook = new Registry();
 		$hook->parse($instance);
-		$hook->register();
 
 		$this->assertFalse(isset($GLOBALS['wp_filter']['wp_loaded'][345]));
 	}

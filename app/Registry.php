@@ -39,6 +39,8 @@ final class Registry
 	 */
 	public function addAction(string $name, callable $callback, int $priority = 10, int $acceptedArgs = 1): void
 	{
+		add_action($name, $callback, $priority, $acceptedArgs);
+
 		$this->actions = $this->add($this->actions, $name, $callback, $priority, $acceptedArgs);
 	}
 
@@ -52,27 +54,15 @@ final class Registry
 	 */
 	public function addFilter(string $name, callable $callback, int $priority = 10, int $acceptedArgs = 1): void
 	{
+		add_filter($name, $callback, $priority, $acceptedArgs);
+
 		$this->filters = $this->add($this->filters, $name, $callback, $priority, $acceptedArgs);
-	}
-
-	/**
-	 * Add the filters and actions in WordPress.
-	 */
-	public function register(): void
-	{
-		foreach ($this->filters as $hook) {
-			add_filter($hook['name'], $hook['callback'], $hook['priority'], $hook['accepted_args']);
-		}
-
-		foreach ($this->actions as $hook) {
-			add_action($hook['name'], $hook['callback'], $hook['priority'], $hook['accepted_args']);
-		}
 	}
 
 	/**
 	 * Remove all actions and filters from WordPress.
 	 */
-	public function deregister(): void
+	public function removeAll(): void
 	{
 		foreach ($this->actions as $hook) {
 			remove_action($hook['name'], $hook['callback'], $hook['priority']);

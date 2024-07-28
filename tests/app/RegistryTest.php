@@ -14,21 +14,10 @@ class RegistryTest extends WPTestCase
 		$func = static function (): bool {
 			return true;
 		};
-
 		$hook = new Registry();
-
-		// No-register yet.
 		$hook->addAction('wp', $func);
-		$this->assertFalse(has_action('wp', $func));
 
-		// Register.
-		$hook->addAction('init', $func);
-		$hook->register();
-
-		$actual = has_action('init', $func);
-		$expect = 10;
-
-		$this->assertSame($expect, $actual);
+		$this->assertSame(10, has_action('wp', $func));
 	}
 
 	public function testAddActionPriority(): void
@@ -36,33 +25,34 @@ class RegistryTest extends WPTestCase
 		$func = static function (): bool {
 			return true;
 		};
-
 		$hook = new Registry();
-
 		$hook->addAction('init', $func, 100);
-		$hook->register();
 
-		$actual = has_action('init', $func);
-		$expect = 100;
-
-		$this->assertSame($expect, $actual);
+		$this->assertSame(100, has_action('init', $func));
 	}
 
 	public function testAddActionAcceptedArgs(): void
 	{
 		$hook = new Registry();
-
-		$hook->addAction('auth_cookie_malformed', static function ($cookie, $scheme): void {
-		}, 100, 2);
-		$hook->register();
+		$hook->addAction(
+			'auth_cookie_malformed',
+			static function ($cookie, $scheme): void {
+			},
+			100,
+			2,
+		);
 
 		do_action('auth_cookie_malformed', '123', 'auth');
 
-		$hook->addAction('auth_cookie_malformed', static function ($cookie, $scheme): void {
-		}, 100);
-		$hook->register();
+		$hook->addAction(
+			'auth_cookie_malformed',
+			static function ($cookie, $scheme): void {
+			},
+			100,
+		);
 
 		$this->expectException(ArgumentCountError::class);
+
 		do_action('auth_cookie_malformed', '123', 'auth');
 	}
 
@@ -73,19 +63,9 @@ class RegistryTest extends WPTestCase
 		};
 
 		$hook = new Registry();
-
-		// No-register yet.
-		$hook->addFilter('the_content', $func);
-		$this->assertFalse(has_filter('the_content', $func));
-
-		// Register.
 		$hook->addFilter('all_plugins', $func);
-		$hook->register();
 
-		$actual = has_filter('all_plugins', $func);
-		$expect = 10;
-
-		$this->assertSame($expect, $actual);
+		$this->assertSame(10, has_filter('all_plugins', $func));
 	}
 
 	public function testAddFilterPriority(): void
@@ -93,35 +73,24 @@ class RegistryTest extends WPTestCase
 		$func = static function ($value) {
 			return $value;
 		};
-
 		$hook = new Registry();
-
-		// Register.
 		$hook->addFilter('all_plugins', $func, 100);
-		$hook->register();
 
-		$actual = has_filter('all_plugins', $func);
-		$expect = 100;
-
-		$this->assertSame($expect, $actual);
+		$this->assertSame(100, has_filter('all_plugins', $func));
 	}
 
 	public function testAddFilterAcceptedArgs(): void
 	{
 		$hook = new Registry();
-
 		$hook->addFilter('allow_empty_comment', static function ($allowEmptyComment, $commentData) {
 			return $allowEmptyComment;
 		}, 100, 2);
-		$hook->register();
 
 		apply_filters('allow_empty_comment', false, []);
 
 		$hook->addFilter('allow_empty_comment', static function ($allowEmptyComment, $commentData) {
 			return $allowEmptyComment;
 		}, 100);
-
-		$hook->register();
 
 		$this->expectException(ArgumentCountError::class);
 
@@ -146,7 +115,6 @@ class RegistryTest extends WPTestCase
 		$hook->addAction('init', $func);
 		$hook->addFilter('the_content', $func);
 		$hook->addFilter('all_plugins', $func);
-		$hook->register();
 
 		// Actions.
 		$this->assertSame(10, has_action('wp', $func));
@@ -160,7 +128,7 @@ class RegistryTest extends WPTestCase
 		$this->assertSame(10, has_filter('the_content', $funcNative));
 		$this->assertSame(10, has_filter('all_plugins', $funcNative));
 
-		$hook->deregister(); // These methods should de-register all actions and filters.
+		$hook->removeAll(); // These methods should de-register all actions and filters.
 
 		// List of actions and filters, added with `add_action` and `add_filter`.
 		$this->assertSame(10, has_action('wp', $funcNative));
