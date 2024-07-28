@@ -109,10 +109,6 @@ final class Registry
 			$this->getCallbackFromRef($callback) :
 			$callback;
 
-		if (! is_callable($callback)) {
-			return;
-		}
-
 		remove_action($tag, $callback, $priority);
 	}
 
@@ -128,10 +124,6 @@ final class Registry
 		$callback = is_string($callback) ?
 			$this->getCallbackFromRef($callback) :
 			$callback;
-
-		if (! is_callable($callback)) {
-			return;
-		}
 
 		remove_filter($tag, $callback, $priority);
 	}
@@ -226,22 +218,20 @@ final class Registry
 	}
 
 	/** @param string $callback The callback or ref to remove from the action hook. */
-	private function getCallbackFromRef(string $callback): ?callable
+	private function getCallbackFromRef(string $callback): callable
 	{
 		if (isset($this->refs[$callback]) && is_callable($this->refs[$callback])) {
 			return $this->refs[$callback];
 		}
-
-		$ref = null;
 
 		if (strncmp($callback, '@', 1) === 0) {
 			if (! isset($this->refs[$callback])) {
 				throw new RefNotFoundException($callback);
 			}
 
-			return is_callable($this->refs[$callback]) ?
-				$this->refs[$callback] :
-				null;
+			if (is_callable($this->refs[$callback])) {
+				return $this->refs[$callback];
+			}
 		}
 
 		$atRef = $this->refs[$callback] ?? null;
@@ -251,9 +241,9 @@ final class Registry
 				throw new RefNotFoundException($callback);
 			}
 
-			return is_callable($this->refs[$atRef]) ?
-				$this->refs[$atRef] :
-				null;
+			if (is_callable($this->refs[$atRef])) {
+				return $this->refs[$atRef];
+			}
 		}
 
 		throw new RefNotFoundException($callback);
