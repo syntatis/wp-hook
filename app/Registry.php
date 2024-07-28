@@ -225,11 +225,7 @@ final class Registry
 		}
 
 		if (strncmp($callback, '@', 1) === 0) {
-			if (! isset($this->refs[$callback])) {
-				throw new RefNotFoundException($callback);
-			}
-
-			if (is_callable($this->refs[$callback])) {
+			if (isset($this->refs[$callback]) && is_callable($this->refs[$callback])) {
 				return $this->refs[$callback];
 			}
 		}
@@ -237,11 +233,7 @@ final class Registry
 		$atRef = $this->refs[$callback] ?? null;
 
 		if (is_string($atRef) && strncmp($atRef, '@', 1) === 0) {
-			if (! isset($this->refs[$atRef])) {
-				throw new RefNotFoundException($callback);
-			}
-
-			if (is_callable($this->refs[$atRef])) {
+			if (isset($this->refs[$atRef]) && is_callable($this->refs[$atRef])) {
 				return $this->refs[$atRef];
 			}
 		}
