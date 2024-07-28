@@ -97,10 +97,9 @@ class RegistryTest extends WPTestCase
 		apply_filters('allow_empty_comment', false, []);
 	}
 
-	public function testDeregister(): void
+	public function testRemoveAll(): void
 	{
 		$hook = new Registry();
-
 		$func = static function ($value): void {
 		};
 		$funcNative = static function ($value): void {
@@ -128,7 +127,8 @@ class RegistryTest extends WPTestCase
 		$this->assertSame(10, has_filter('the_content', $funcNative));
 		$this->assertSame(10, has_filter('all_plugins', $funcNative));
 
-		$hook->removeAll(); // These methods should de-register all actions and filters.
+		// These methods should de-register all actions and filters.
+		$hook->removeAll();
 
 		// List of actions and filters, added with `add_action` and `add_filter`.
 		$this->assertSame(10, has_action('wp', $funcNative));
