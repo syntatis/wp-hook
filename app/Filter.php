@@ -20,15 +20,24 @@ class Filter
 
 	protected int $acceptedArgs;
 
-	/** @phpstan-param non-empty-string $name */
+	/** @var array<string, mixed> */
+	protected array $options;
+
+	/**
+	 * @param array<string, mixed> $options
+	 *
+	 * @phpstan-param non-empty-string $name
+	 */
 	public function __construct(
 		string $name,
 		int $priority = 10,
-		int $acceptedArgs = 1
+		int $acceptedArgs = 1,
+		array $options = []
 	) {
 		$this->name = $name;
 		$this->priority = $priority;
 		$this->acceptedArgs = $acceptedArgs;
+		$this->options = $options;
 	}
 
 	public function getName(): string
@@ -44,5 +53,11 @@ class Filter
 	public function getAcceptedArgs(): int
 	{
 		return $this->acceptedArgs;
+	}
+
+	/** @return array<string,mixed> */
+	public function getOptions(): array
+	{
+		return $this->options;
 	}
 }
