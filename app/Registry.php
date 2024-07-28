@@ -231,12 +231,6 @@ final class Registry
 			return $this->refs[$callback];
 		}
 
-		if (strncmp($callback, '@', 1) === 0) {
-			if (isset($this->refs[$callback]) && is_callable($this->refs[$callback])) {
-				return $this->refs[$callback];
-			}
-		}
-
 		$atRef = $this->refs[$callback] ?? null;
 
 		if (is_string($atRef) && strncmp($atRef, '@', 1) === 0) {
