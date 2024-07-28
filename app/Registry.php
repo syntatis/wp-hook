@@ -6,6 +6,7 @@ namespace Syntatis\WPHook;
 
 use Closure;
 use InvalidArgumentException;
+use Syntatis\WPHook\Exceptions\RefExistsException;
 use Syntatis\WPHook\Exceptions\RefNotFoundException;
 use Syntatis\WPHook\Support\Parser;
 
@@ -179,11 +180,25 @@ final class Registry
 	private function addRef(string $ref, callable $callback): void
 	{
 		$namedRef = $this->getNamedRef($callback);
+		$atRef = '@' . $ref;
 
 		if ($namedRef !== $ref) {
-			$this->refs[$namedRef] = '@' . $ref;
-			$this->refs['@' . $ref] = $callback;
+			if (isset($this->refs[$namedRef])) {
+				throw new RefExistsException($namedRef);
+			}
+
+			$this->refs[$namedRef] = $atRef;
+
+			if (isset($this->refs[$atRef])) {
+				throw new RefExistsException($atRef);
+			}
+
+			$this->refs[$atRef] = $callback;
 		} else {
+			if ($this->refs[$ref]) {
+				throw new RefExistsException($ref);
+			}
+
 			$this->refs[$ref] = $callback;
 		}
 	}
