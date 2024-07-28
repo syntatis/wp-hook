@@ -256,6 +256,6 @@ final class Registry
 				null;
 		}
 
-		return null;
+		throw new RefNotFoundException($callback);
 	}
 }

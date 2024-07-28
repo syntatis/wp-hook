@@ -130,6 +130,18 @@ class RegistryTest extends WPTestCase
 		$this->assertFalse(has_action('get_sidebar', '__return_false'));
 	}
 
+	public function testRemoveActionInvalidCallback(): void
+	{
+		$hook = new Registry();
+		$hook->addAction('get_sidebar', '__return_true', 190);
+
+		$this->assertSame(190, has_action('get_sidebar', '__return_true'));
+
+		$this->expectException(RefNotFoundException::class);
+
+		$hook->removeAction('get_sidebar', '__invalid_function__', 190);
+	}
+
 	public function testRemoveActionClassMethod(): void
 	{
 		$hook = new Registry();
