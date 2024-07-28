@@ -6,6 +6,7 @@ namespace Syntatis\WPHook\Tests;
 
 use ArgumentCountError;
 use InvalidArgumentException;
+use Syntatis\WPHook\Exceptions\RefExistsException;
 use Syntatis\WPHook\Exceptions\RefNotFoundException;
 use Syntatis\WPHook\Registry;
 
@@ -304,12 +305,11 @@ class RegistryTest extends WPTestCase
 	public function testAddRefExists(): void
 	{
 		$hook = new Registry();
-		$hook->addFilter('get_the_archive_title', '__return_empty_string', 280, 1, ['ref' => 'ret-false']);
+		$hook->addFilter('the_content', static fn () => true, 320, 1, ['ref' => 'ref-true']);
 
-		$this->assertSame(280, has_action('get_the_archive_title', '__return_empty_string'));
+		$this->expectException(RefExistsException::class);
 
-		$this->expectException(RefNotFoundException::class);
-		$hook->removeFilter('get_the_archive_title', '@no-ret-false', 280);
+		$hook->addFilter('the_content_rss', static fn () => true, 320, 1, ['ref' => 'ref-true']);
 	}
 
 	public function testRemoveAll(): void
