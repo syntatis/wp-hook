@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Syntatis\WPHook\Tests;
 
 use ArgumentCountError;
+use InvalidArgumentException;
 use Syntatis\WPHook\Registry;
 
 class RegistryTest extends WPTestCase
@@ -97,6 +98,114 @@ class RegistryTest extends WPTestCase
 		apply_filters('allow_empty_comment', false, []);
 	}
 
+	public function testRemoveAction(): void
+	{
+		$hook = new Registry();
+		$func1 = static function ($value): void {
+		};
+		$func2 = static function ($value): void {
+		};
+		$hook->addAction('wp', $func1, 30);
+		$hook->addAction('wp', $func2, 30);
+
+		$this->assertSame(30, has_action('wp', $func1));
+		$this->assertSame(30, has_action('wp', $func2));
+
+		$hook->removeAction('wp', $func2, 30);
+
+		$this->assertSame(30, has_action('wp', $func1));
+		$this->assertFalse(has_action('wp', $func2));
+	}
+
+	/** @group with-ref */
+	public function testSetInvalidRef(): void
+	{
+		$hook = new Registry();
+		$func = static fn ($value) => null;
+
+		$this->expectException(InvalidArgumentException::class);
+
+		$hook->addAction('wp_footer', $func, 70, 1, ['ref' => '@bar']);
+	}
+
+	/** @group with-ref */
+	public function testRemoveActionAnonymousClosure(): void
+	{
+		$hook = new Registry();
+		$func = static fn ($value) => null;
+		$hook->addAction('register_sidebar', $func, 50, 1, ['ref' => 'bar']);
+
+		$this->assertSame(50, has_action('register_sidebar', $func));
+
+		$hook->removeAction('register_sidebar', '@bar', 50);
+
+		$this->assertFalse(has_action('register_sidebar', $func));
+	}
+
+	/** @group with-ref */
+	public function testRemoveActionNamedFunction(): void
+	{
+		$hook = new Registry();
+		$hook->addAction('get_sidebar', '__return_false', 39, 1, ['ref' => 'false']);
+
+		$this->assertSame(39, has_action('get_sidebar', '__return_false'));
+
+		$hook->removeAction('get_sidebar', '__return_false', 39);
+
+		$this->assertFalse(has_action('get_sidebar', '__return_false'));
+
+		// Remove with ref.
+		$hook = new Registry();
+		$hook->addAction('get_sidebar', '__return_false', 40, 1, ['ref' => 'false']);
+
+		$this->assertSame(40, has_action('get_sidebar', '__return_false'));
+
+		$hook->removeAction('get_sidebar', '@false', 40);
+
+		$this->assertFalse(has_action('get_sidebar', '__return_false'));
+	}
+
+	/**
+	 * @group test
+	 */
+	public function testRemoveActionClassMethod(): void
+	{
+		$hook = new Registry();
+		$callback = new CallbackTest();
+		$hook->addAction('admin_bar_init', [$callback, 'init'], 25);
+
+		$this->assertSame(25, has_action('admin_bar_init', [$callback, 'init']));
+
+		$hook->removeAction('admin_bar_init', 'Syntatis\WPHook\Tests\CallbackTest::init', 25);
+
+		$this->assertFalse(has_action('admin_bar_init', [$callback, 'init']));
+	}
+
+	/** @group with-ref */
+	public function testRemoveActionClassMethodWithRef(): void
+	{
+		$hook = new Registry();
+		$callback = new CallbackTest();
+		$hook->addAction('wp_head', [$callback, 'init'], 33, 1, ['ref' => 'foo']);
+
+		$this->assertSame(33, has_action('wp_head', [$callback, 'init']));
+
+		$hook->removeAction('wp_head', 'Syntatis\WPHook\Tests\CallbackTest::init', 33);
+
+		$this->assertFalse(has_action('wp_head', [$callback, 'init']));
+
+		// Remove with ref.
+		$hook = new Registry();
+		$callback = new CallbackTest();
+		$hook->addAction('wp_head', [$callback, 'init'], 34, 1, ['ref' => 'foo']);
+
+		$this->assertSame(34, has_action('wp_head', [$callback, 'init']));
+
+		$hook->removeAction('wp_head', '@foo', 34);
+
+		$this->assertFalse(has_action('wp_head', [$callback, 'init']));
+	}
+
 	public function testRemoveAll(): void
 	{
 		$hook = new Registry();
@@ -141,5 +250,12 @@ class RegistryTest extends WPTestCase
 		$this->assertFalse(has_action('init', $func));
 		$this->assertFalse(has_filter('the_content', $func));
 		$this->assertFalse(has_filter('all_plugins', $func));
+	}
+}
+
+// phpcs:disable
+class CallbackTest {
+	public function init(): void
+	{
 	}
 }
