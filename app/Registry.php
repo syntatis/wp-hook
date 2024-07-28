@@ -6,6 +6,7 @@ namespace Syntatis\WPHook;
 
 use Closure;
 use InvalidArgumentException;
+use Syntatis\WPHook\Exceptions\RefNotFoundException;
 use Syntatis\WPHook\Support\Parser;
 
 use function count;
@@ -75,14 +76,22 @@ final class Registry
 	/**
 	 * Add a new filter to the collection to be registered with WordPress.
 	 *
-	 * @param string   $tag          The name of the WordPress filter that is being registered.
-	 * @param callable $callback     The name of the function to be called with Filter hook.
-	 * @param int      $priority     Optional. The priority at which the function should be fired. Default is 10.
-	 * @param int      $acceptedArgs Optional. The number of arguments that should be passed to the $callback. Default is 1.
+	 * @param string               $tag          The name of the WordPress filter that is being registered.
+	 * @param callable             $callback     The name of the function to be called with Filter hook.
+	 * @param int                  $priority     Optional. The priority at which the function should be fired. Default is 10.
+	 * @param int                  $acceptedArgs Optional. The number of arguments that should be passed to the $callback. Default is 1.
+	 * @param array<string, mixed> $options      Optional. Additional options for the action.
 	 */
-	public function addFilter(string $tag, callable $callback, int $priority = 10, int $acceptedArgs = 1): void
-	{
+	public function addFilter(
+		string $tag,
+		callable $callback,
+		int $priority = 10,
+		int $acceptedArgs = 1,
+		array $options = []
+	): void {
 		add_filter($tag, $callback, $priority, $acceptedArgs);
+
+		$this->addRef($this->getRef($callback, $options), $callback);
 
 		$this->filters = $this->add($this->filters, $tag, $callback, $priority, $acceptedArgs);
 	}
@@ -110,13 +119,13 @@ final class Registry
 	/**
 	 * Removes a filter callback function from a specified hook.
 	 *
-	 * @param string   $tag      The name of the filter hook to remove the callback from.
-	 * @param callable $callback The callback function to remove from the filter hook.
-	 * @param int      $priority Optional. The priority of the callback function. Default is 10.
+	 * @param string          $tag      The name of the filter hook to remove the callback from.
+	 * @param string|callable $callback The callback or ref to remove from the filter hook.
+	 * @param int             $priority Optional. The priority of the callback function. Default is 10.
 	 */
-	public function removeFilter(string $tag, callable $callback, int $priority = 10): void
+	public function removeFilter(string $tag, $callback, int $priority = 10): void
 	{
-		$callback = ! is_callable($callback) ?
+		$callback = is_string($callback) ?
 			$this->getCallbackFromRef($callback) :
 			$callback;
 
@@ -226,7 +235,11 @@ final class Registry
 		$ref = null;
 
 		if (strncmp($callback, '@', 1) === 0) {
-			return isset($this->refs[$callback]) && is_callable($this->refs[$callback]) ?
+			if (! isset($this->refs[$callback])) {
+				throw new RefNotFoundException($callback);
+			}
+
+			return is_callable($this->refs[$callback]) ?
 				$this->refs[$callback] :
 				null;
 		}
@@ -234,7 +247,11 @@ final class Registry
 		$atRef = $this->refs[$callback] ?? null;
 
 		if (is_string($atRef) && strncmp($atRef, '@', 1) === 0) {
-			return isset($this->refs[$atRef]) && is_callable($this->refs[$atRef]) ?
+			if (! isset($this->refs[$atRef])) {
+				throw new RefNotFoundException($callback);
+			}
+
+			return is_callable($this->refs[$atRef]) ?
 				$this->refs[$atRef] :
 				null;
 		}
