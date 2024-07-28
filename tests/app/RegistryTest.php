@@ -165,9 +165,6 @@ class RegistryTest extends WPTestCase
 		$this->assertFalse(has_action('get_sidebar', '__return_false'));
 	}
 
-	/**
-	 * @group test
-	 */
 	public function testRemoveActionClassMethod(): void
 	{
 		$hook = new Registry();
