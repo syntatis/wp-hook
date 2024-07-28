@@ -166,9 +166,7 @@ class RegistryTest extends WPTestCase
 		$hook->addAction('wp_footer', $func, 70, 1, ['ref' => '@bar']);
 	}
 
-	/**
-	 * @group with-ref
-	 */
+	/** @group with-ref */
 	public function testRemoveActionAnonymousFunction(): void
 	{
 		$hook = new Registry();
@@ -191,9 +189,7 @@ class RegistryTest extends WPTestCase
 		$hook->removeAction('register_sidebar', '@no-bar', 50);
 	}
 
-	/**
-	 * @group with-ref
-	 */
+	/** @group with-ref */
 	public function testRemoveActionNamedFunctionWithRef(): void
 	{
 		$hook = new Registry();
