@@ -96,7 +96,7 @@ final class Registry
 	 */
 	public function removeAction(string $tag, $callback, int $priority = 10): void
 	{
-		$callback = ! is_callable($callback) ?
+		$callback = is_string($callback) ?
 			$this->getCallbackFromRef($callback) :
 			$callback;
 

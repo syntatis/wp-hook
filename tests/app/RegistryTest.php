@@ -117,6 +117,32 @@ class RegistryTest extends WPTestCase
 		$this->assertFalse(has_action('wp', $func2));
 	}
 
+	public function testRemoveActionNamedFunction(): void
+	{
+		$hook = new Registry();
+		$hook->addAction('get_sidebar', '__return_false', 39, 1);
+
+		$this->assertSame(39, has_action('get_sidebar', '__return_false'));
+
+		$hook->removeAction('get_sidebar', '__return_false', 39);
+
+		$this->assertFalse(has_action('get_sidebar', '__return_false'));
+	}
+
+	/** @group debug */
+	public function testRemoveActionClassMethod(): void
+	{
+		$hook = new Registry();
+		$callback = new CallbackTest();
+		$hook->addAction('admin_bar_init', [$callback, 'init'], 25);
+
+		$this->assertSame(25, has_action('admin_bar_init', [$callback, 'init']));
+
+		$hook->removeAction('admin_bar_init', 'Syntatis\WPHook\Tests\CallbackTest::init', 25);
+
+		$this->assertFalse(has_action('admin_bar_init', [$callback, 'init']));
+	}
+
 	/** @group with-ref */
 	public function testSetInvalidRef(): void
 	{
@@ -129,7 +155,7 @@ class RegistryTest extends WPTestCase
 	}
 
 	/** @group with-ref */
-	public function testRemoveActionAnonymousClosure(): void
+	public function testRemoveActionAnonymousFunction(): void
 	{
 		$hook = new Registry();
 		$func = static fn ($value) => null;
@@ -143,7 +169,7 @@ class RegistryTest extends WPTestCase
 	}
 
 	/** @group with-ref */
-	public function testRemoveActionNamedFunction(): void
+	public function testRemoveActionNamedFunctionWithRef(): void
 	{
 		$hook = new Registry();
 		$hook->addAction('get_sidebar', '__return_false', 39, 1, ['ref' => 'false']);
@@ -163,19 +189,6 @@ class RegistryTest extends WPTestCase
 		$hook->removeAction('get_sidebar', '@false', 40);
 
 		$this->assertFalse(has_action('get_sidebar', '__return_false'));
-	}
-
-	public function testRemoveActionClassMethod(): void
-	{
-		$hook = new Registry();
-		$callback = new CallbackTest();
-		$hook->addAction('admin_bar_init', [$callback, 'init'], 25);
-
-		$this->assertSame(25, has_action('admin_bar_init', [$callback, 'init']));
-
-		$hook->removeAction('admin_bar_init', 'Syntatis\WPHook\Tests\CallbackTest::init', 25);
-
-		$this->assertFalse(has_action('admin_bar_init', [$callback, 'init']));
 	}
 
 	/** @group with-ref */
