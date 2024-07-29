@@ -187,9 +187,9 @@ final class Registry
 	/** @param array{callback:callable} $entry */
 	private function addRef(string $id, string $nativeId, array $entry): void
 	{
-		$atId = '@' . $id;
-
 		if ($nativeId !== $id) {
+			$atId = '@' . $id;
+
 			if (isset($this->refs[$atId])) {
 				throw new RefExistsException($atId);
 			}
