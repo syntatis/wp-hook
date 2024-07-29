@@ -173,6 +173,21 @@ class ParserTest extends WPTestCase
 
 		$this->assertFalse(isset($GLOBALS['wp_filter']['wp_loaded'][345]));
 	}
+
+	public function testWithOptions(): void
+	{
+		$instance = new WithOptions();
+		$hook = new Registry();
+		$hook->parse($instance);
+
+		$this->assertTrue(isset($GLOBALS['wp_filter']['admin_bar_init'][3210]));
+		$this->assertTrue(isset($GLOBALS['wp_filter']['the_content'][3210]));
+
+		$hook->removeAction('admin_bar_init', WithOptions::class . '::bar', 3210);
+
+		$this->assertFalse(isset($GLOBALS['wp_filter']['admin_bar_init'][3210]));
+		$this->assertTrue(isset($GLOBALS['wp_filter']['the_content'][3210]));
+	}
 }
 
 // phpcs:disable
@@ -226,5 +241,19 @@ class WithPrivateMethod
 	private function foo()
 	{
 
+	}
+}
+
+class WithOptions
+{
+	#[Action(name: 'admin_bar_init', priority: 3210, options: ['ref' => 'bar'])]
+	public function bar()
+	{
+	}
+
+	#[Filter(name: 'the_content', priority: 3210, options: ['ref' => 'content'])]
+	public function content()
+	{
+		return '';
 	}
 }
