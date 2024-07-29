@@ -147,9 +147,8 @@ $registry->removeAction('init', '@init-hello-world', 10);
 $registry->removeFilter('the_content', '@the-content-hello-world', 100);
 ```
 > [!IMPORTANT]
-> The ID must be all lowercase and use words separated by "-", ".", or "_". It should not have any uppercase letters, spaces, or special characters.
-> You can use a slash ("/") to define the namespace, like `acme/hello-world`, to avoid conflicts with other plugins or themes.
-> Each hook added to the registry must have a unique ID. If you use the same ID twice, an error will occur.
+> The ID must be all lowercase and use words separated by "-", ".", or "_". It should not have any uppercase letters, spaces, or special characters. You can use a slash ("/") to define the namespace, like `acme/hello-world`, to avoid conflicts with other plugins or themes.
+> Please note that the ID added within the registry must be unique. If you're trying to add the same ID twice, it will throw an exception.
 
 ## References
 
