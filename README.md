@@ -102,36 +102,20 @@ $registry->addFilter('the_content', 'content', 100);
 $registry->removeAll();
 ```
 
-In an object, we normally would to attach Filter and Action with the object method.
+It is possible to attach hook with method from an object instance, a static method, or a closure:
 
 ```php
 use Syntatis\WPHook\Registry;
 
-class HelloWorld
-{
-    public function initialise(): void
-    {
-        echo 'initialise';
-    }
-
-    public function content(string $content): string
-    {
-        return $content . "\ncontent";
-    }
-
-    public function option(string $optionName, mixed $value): void
-    {
-        echo $optionName . $value;
-    }
-}
-
 $helloWorld = new HelloWorld();
+$anonymous = fn () => 'Hello, World!';
+
 $registry = new Registry();
-$registry->addAction('init', [$helloWorld, 'initialise']);
 $registry->addFilter('the_content', [$helloWorld, 'content'], 100);
+$registry->addAction('init', $anonymous);
 ```
 
-However, this makes it rather tricky to remove the hook later on the code since you need to pass the same object instance to the `removeAction` and `removeFilter` methods, which is not always possible.
+However, this makes it rather tricky to remove the hook later on the code since you need to pass the same object instance or the same reference to the anonymous function to the `removeAction` and `removeFilter` methods, which is not always possible.
 
 To circumvent this, you can pass `id` to the `addAction` and `addFilter` methods, and refer the id using `@` symbol when removing the hook. For example:
 
@@ -139,9 +123,11 @@ To circumvent this, you can pass `id` to the `addAction` and `addFilter` methods
 use Syntatis\WPHook\Registry;
 
 $helloWorld = new HelloWorld();
+$anonymous = fn () => 'Hello, World!';
+
 $registry = new Registry();
-$registry->addAction('init', [$helloWorld, 'initialise'], 10, 1, ['id' => 'init-hello-world']);
 $registry->addFilter('the_content', [$helloWorld, 'content'], 100, 1, ['id' => 'the-content-hello-world']);
+$registry->addAction('init', $anonymous, 10, 1, ['id' => 'init-hello-world']);
 
 // ...much later in the code...
 
