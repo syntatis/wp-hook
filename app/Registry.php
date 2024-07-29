@@ -14,11 +14,9 @@ use function count;
 use function get_class;
 use function gettype;
 use function is_array;
-use function is_callable;
 use function is_string;
 use function preg_match;
 use function spl_object_hash;
-use function strncmp;
 use function trim;
 
 /**
@@ -30,12 +28,15 @@ use function trim;
  */
 final class Registry
 {
-	/**
-	 * Holds reference to callbacks.
-	 *
-	 * @var array<string,callable|string>
-	 */
+	/** @var array<string,array{callback:callable}> */
 	private array $refs = [];
+
+	/**
+	 * Holds aliases to refs.
+	 *
+	 * @var array<string,string>
+	 */
+	private array $aliases = [];
 
 	/**
 	 * The array of actions registered with WordPress.
@@ -69,7 +70,10 @@ final class Registry
 	): void {
 		add_action($tag, $callback, $priority, $acceptedArgs);
 
-		$this->addRef($this->getRef($callback, $options), $callback);
+		$nativeId = $this->getNativeId($callback);
+		$namedId = $this->getNamedId($options) ?? $nativeId;
+
+		$this->addRef($namedId, $nativeId, ['callback' => $callback]);
 
 		$this->actions = $this->add($this->actions, $tag, $callback, $priority, $acceptedArgs);
 	}
@@ -92,7 +96,10 @@ final class Registry
 	): void {
 		add_filter($tag, $callback, $priority, $acceptedArgs);
 
-		$this->addRef($this->getRef($callback, $options), $callback);
+		$nativeId = $this->getNativeId($callback);
+		$namedId = $this->getNamedId($options) ?? $nativeId;
+
+		$this->addRef($namedId, $nativeId, ['callback' => $callback]);
 
 		$this->filters = $this->add($this->filters, $tag, $callback, $priority, $acceptedArgs);
 	}
@@ -107,7 +114,7 @@ final class Registry
 	public function removeAction(string $tag, $callback, int $priority = 10): void
 	{
 		$callback = is_string($callback) ?
-			$this->getCallbackFromRef($callback) :
+			$this->getCallbackFromId($callback) :
 			$callback;
 
 		remove_action($tag, $callback, $priority);
@@ -123,7 +130,7 @@ final class Registry
 	public function removeFilter(string $tag, $callback, int $priority = 10): void
 	{
 		$callback = is_string($callback) ?
-			$this->getCallbackFromRef($callback) :
+			$this->getCallbackFromId($callback) :
 			$callback;
 
 		remove_filter($tag, $callback, $priority);
@@ -177,41 +184,42 @@ final class Registry
 		return $hooks;
 	}
 
-	private function addRef(string $ref, callable $callback): void
+	/** @param array{callback:callable} $entry */
+	private function addRef(string $id, string $nativeId, array $entry): void
 	{
-		$namedRef = $this->getNamedRef($callback);
-		$atRef = '@' . $ref;
+		$atId = '@' . $id;
 
-		if ($namedRef !== $ref) {
-			$this->refs[$namedRef] = $atRef;
-
-			if (isset($this->refs[$atRef])) {
-				throw new RefExistsException($atRef);
+		if ($nativeId !== $id) {
+			if (isset($this->refs[$atId])) {
+				throw new RefExistsException($atId);
 			}
 
-			$this->refs[$atRef] = $callback;
+			$this->refs[$atId] = $entry;
+			$this->aliases[$nativeId] = $atId;
 		} else {
-			$this->refs[$ref] = $callback;
+			$this->refs[$nativeId] = [
+				'callback' => $entry['callback'],
+			];
 		}
 	}
 
 	/** @param array<string, mixed> $options */
-	private function getRef(callable $callback, array $options = []): string
+	private function getNamedId(array $options = []): ?string
 	{
-		if (isset($options['ref']) && is_string($options['ref']) && trim($options['ref']) !== '') {
-			preg_match('/^[a-z0-9\.\-\_\\\]+/', $options['ref'], $matches);
+		if (isset($options['id']) && is_string($options['id']) && trim($options['id']) !== '') {
+			preg_match('/^[a-z0-9\.\-\_\\\]+/', $options['id'], $matches);
 
 			if (count($matches) === 0) {
 				throw new InvalidArgumentException('Ref should only contains letters, numbers, hyphens, dots, underscores, and backslashes.');
 			}
 
-			return $options['ref'];
+			return $options['id'];
 		}
 
-		return $this->getNamedRef($callback);
+		return null;
 	}
 
-	private function getNamedRef(callable $callback): string
+	private function getNativeId(callable $callback): string
 	{
 		if (gettype($callback) === 'string') {
 			return $callback;
@@ -224,21 +232,17 @@ final class Registry
 		return spl_object_hash(Closure::fromCallable($callback));
 	}
 
-	/** @param string $callback The callback or ref to remove from the action hook. */
-	private function getCallbackFromRef(string $callback): callable
+	/** @param string $id The callback or ref to remove from the action hook. */
+	private function getCallbackFromId(string $id): callable
 	{
-		if (isset($this->refs[$callback]) && is_callable($this->refs[$callback])) {
-			return $this->refs[$callback];
+		if (isset($this->aliases[$id])) {
+			return $this->refs[$this->aliases[$id]]['callback'];
 		}
 
-		$atRef = $this->refs[$callback] ?? null;
-
-		if (is_string($atRef) && strncmp($atRef, '@', 1) === 0) {
-			if (isset($this->refs[$atRef]) && is_callable($this->refs[$atRef])) {
-				return $this->refs[$atRef];
-			}
+		if (isset($this->refs[$id])) {
+			return $this->refs[$id]['callback'];
 		}
 
-		throw new RefNotFoundException($callback);
+		throw new RefNotFoundException($id);
 	}
 }

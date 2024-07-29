@@ -119,6 +119,7 @@ class RegistryTest extends WPTestCase
 		$this->assertFalse(has_action('wp', $func2));
 	}
 
+	/** @group test-here */
 	public function testRemoveActionNamedFunction(): void
 	{
 		$hook = new Registry();
@@ -164,7 +165,7 @@ class RegistryTest extends WPTestCase
 
 		$this->expectException(InvalidArgumentException::class);
 
-		$hook->addAction('wp_footer', $func, 70, 1, ['ref' => '@bar']);
+		$hook->addAction('wp_footer', $func, 70, 1, ['id' => '@bar']);
 	}
 
 	/** @group with-ref */
@@ -172,7 +173,7 @@ class RegistryTest extends WPTestCase
 	{
 		$hook = new Registry();
 		$func = static fn ($value) => null;
-		$hook->addAction('register_sidebar', $func, 50, 1, ['ref' => 'bar']);
+		$hook->addAction('register_sidebar', $func, 50, 1, ['id' => 'bar']);
 
 		$this->assertSame(50, has_action('register_sidebar', $func));
 
@@ -183,7 +184,7 @@ class RegistryTest extends WPTestCase
 		// With invalid ref.
 		$hook = new Registry();
 		$func = static fn ($value) => null;
-		$hook->addAction('register_sidebar', $func, 51, 1, ['ref' => 'bar']);
+		$hook->addAction('register_sidebar', $func, 51, 1, ['id' => 'bar']);
 
 		$this->expectException(RefNotFoundException::class);
 
@@ -194,7 +195,7 @@ class RegistryTest extends WPTestCase
 	public function testRemoveActionNamedFunctionWithRef(): void
 	{
 		$hook = new Registry();
-		$hook->addAction('get_sidebar', '__return_false', 39, 1, ['ref' => 'false']);
+		$hook->addAction('get_sidebar', '__return_false', 39, 1, ['id' => 'false']);
 
 		$this->assertSame(39, has_action('get_sidebar', '__return_false'));
 
@@ -204,7 +205,7 @@ class RegistryTest extends WPTestCase
 
 		// Remove with ref.
 		$hook = new Registry();
-		$hook->addAction('get_sidebar', '__return_false', 40, 1, ['ref' => 'false']);
+		$hook->addAction('get_sidebar', '__return_false', 40, 1, ['id' => 'false']);
 
 		$this->assertSame(40, has_action('get_sidebar', '__return_false'));
 
@@ -217,7 +218,7 @@ class RegistryTest extends WPTestCase
 	public function testRemoveActionNamedFunctionWithInvalidRef(): void
 	{
 		$hook = new Registry();
-		$hook->addAction('get_sidebar', '__return_false', 40, 1, ['ref' => 'false']);
+		$hook->addAction('get_sidebar', '__return_false', 40, 1, ['id' => 'false']);
 
 		$this->expectException(RefNotFoundException::class);
 
@@ -232,7 +233,7 @@ class RegistryTest extends WPTestCase
 	{
 		$hook = new Registry();
 		$callback = new CallbackTest();
-		$hook->addAction('wp_head', [$callback, 'init'], 33, 1, ['ref' => 'foo']);
+		$hook->addAction('wp_head', [$callback, 'init'], 33, 1, ['id' => 'foo']);
 
 		$this->assertSame(33, has_action('wp_head', [$callback, 'init']));
 
@@ -243,7 +244,7 @@ class RegistryTest extends WPTestCase
 		// Remove with ref.
 		$hook = new Registry();
 		$callback = new CallbackTest();
-		$hook->addAction('wp_head', [$callback, 'init'], 34, 1, ['ref' => 'foo']);
+		$hook->addAction('wp_head', [$callback, 'init'], 34, 1, ['id' => 'foo']);
 
 		$this->assertSame(34, has_action('wp_head', [$callback, 'init']));
 
@@ -257,7 +258,7 @@ class RegistryTest extends WPTestCase
 	{
 		$hook = new Registry();
 		$func = static fn ($value) => null;
-		$hook->addFilter('icon_dir', $func, 10, 1, ['ref' => 'body']);
+		$hook->addFilter('icon_dir', $func, 10, 1, ['id' => 'body']);
 
 		$this->assertSame(10, has_filter('icon_dir', $func));
 
@@ -270,7 +271,7 @@ class RegistryTest extends WPTestCase
 	public function testRemoveFilterNamedFunctionWithRef(): void
 	{
 		$hook = new Registry();
-		$hook->addFilter('get_the_excerpt', '__return_empty_string', 28, 1, ['ref' => 'ret-false']);
+		$hook->addFilter('get_the_excerpt', '__return_empty_string', 28, 1, ['id' => 'ret-false']);
 
 		$this->assertSame(28, has_action('get_the_excerpt', '__return_empty_string'));
 
@@ -280,7 +281,7 @@ class RegistryTest extends WPTestCase
 
 		// Remove with ref.
 		$hook = new Registry();
-		$hook->addFilter('get_the_excerpt', '__return_empty_string', 200, 1, ['ref' => 'ret-false']);
+		$hook->addFilter('get_the_excerpt', '__return_empty_string', 200, 1, ['id' => 'ret-false']);
 
 		$this->assertSame(200, has_action('get_the_excerpt', '__return_empty_string'));
 
@@ -293,7 +294,7 @@ class RegistryTest extends WPTestCase
 	public function testRemoveFilterNamedFunctionWithInvalidRef(): void
 	{
 		$hook = new Registry();
-		$hook->addFilter('get_the_archive_title', '__return_empty_string', 280, 1, ['ref' => 'ret-false']);
+		$hook->addFilter('get_the_archive_title', '__return_empty_string', 280, 1, ['id' => 'ret-false']);
 
 		$this->assertSame(280, has_action('get_the_archive_title', '__return_empty_string'));
 
@@ -305,11 +306,11 @@ class RegistryTest extends WPTestCase
 	public function testAddRefExists(): void
 	{
 		$hook = new Registry();
-		$hook->addFilter('the_content', static fn () => true, 320, 1, ['ref' => 'ref-true']);
+		$hook->addFilter('the_content', static fn () => true, 320, 1, ['id' => 'ref-true']);
 
 		$this->expectException(RefExistsException::class);
 
-		$hook->addFilter('the_content_rss', static fn () => true, 320, 1, ['ref' => 'ref-true']);
+		$hook->addFilter('the_content_rss', static fn () => true, 320, 1, ['id' => 'ref-true']);
 	}
 
 	public function testRemoveAll(): void
