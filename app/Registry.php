@@ -108,14 +108,12 @@ final class Registry
 	 * Removes an action callback function from a specified hook.
 	 *
 	 * @param string          $tag      The name of the action hook to remove the callback from.
-	 * @param string|callable $callback The callback or ref to remove from the action hook.
+	 * @param string|callable $ref      The callback or ref id to remove from the action hook.
 	 * @param int             $priority Optional. The priority of the callback function. Default is 10.
 	 */
-	public function removeAction(string $tag, $callback, int $priority = 10): void
+	public function removeAction(string $tag, $ref, int $priority = 10): void
 	{
-		$callback = is_string($callback) ?
-			$this->getCallbackFromId($callback) :
-			$callback;
+		$callback = is_string($ref) ? $this->getCallbackFromId($ref) : $ref;
 
 		remove_action($tag, $callback, $priority);
 	}
@@ -124,14 +122,12 @@ final class Registry
 	 * Removes a filter callback function from a specified hook.
 	 *
 	 * @param string          $tag      The name of the filter hook to remove the callback from.
-	 * @param string|callable $callback The callback or ref to remove from the filter hook.
+	 * @param string|callable $ref      The callback or ref id to remove from the filter hook.
 	 * @param int             $priority Optional. The priority of the callback function. Default is 10.
 	 */
-	public function removeFilter(string $tag, $callback, int $priority = 10): void
+	public function removeFilter(string $tag, $ref, int $priority = 10): void
 	{
-		$callback = is_string($callback) ?
-			$this->getCallbackFromId($callback) :
-			$callback;
+		$callback = is_string($ref) ? $this->getCallbackFromId($ref) : $ref;
 
 		remove_filter($tag, $callback, $priority);
 	}
