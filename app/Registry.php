@@ -203,7 +203,7 @@ final class Registry
 	private function getNamedId(array $options = []): ?string
 	{
 		if (isset($options['id']) && is_string($options['id']) && trim($options['id']) !== '') {
-			preg_match('/^[a-z0-9\.\-\_\\\]+/', $options['id'], $matches);
+			preg_match('/^[a-z0-9]([_.-]?[a-z0-9]+)*(\/[a-z0-9](([_.]|-{1,2})?[a-z0-9]+)*)?$/', $options['id'], $matches);
 
 			if (count($matches) === 0) {
 				throw new InvalidArgumentException(

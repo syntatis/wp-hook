@@ -31,7 +31,6 @@ $registry = new Registry();
 $registry->addAction('init', 'initialise');
 $registry->addFilter('the_content', 'content', 100);
 $registry->addAction('add_option', 'option', 100, 2);
-$registry->register();
 ```
 
 ### Using PHP Attributes
@@ -72,26 +71,85 @@ class HelloWorld
 
 $registry = new Registry();
 $registry->parse(new HelloWorld());
-$registry->register();
 ```
 
 > [!NOTE]
 > Attributes will only be applied to non-abstract public methods that are not PHP native methods or any methods that begin with `__` like `__constructor`, `__clone`, and `__callStatic`.
 > If you add the Attributes at the class level, the class should implement the `__invoke` method, as shown in the above example.
 
-### Deregistering Hooks
+### Removing Hook
 
-You can also deregister hooks, which will remove all the actions and filters that have been registered in the `Hook` instance:
+You can also remove a hook similarly to how you would with the native WordPress functions:
 
 ```php
 $registry = new Registry();
 $registry->addAction('init', 'initialise');
 $registry->addFilter('the_content', 'content', 100);
-$registry->register();
 
 // ...later in the code...
-$registry->deregister();
+$registry->removeAction('init', 'initialise');
+$registry->removeFilter('the_content', 'content', 100);
 ```
+
+It is also possible to remove all hooks at once:
+
+```php
+$registry = new Registry();
+$registry->addAction('init', 'initialise');
+$registry->addFilter('the_content', 'content', 100);
+
+// ...later in the code...
+$registry->removeAll();
+```
+
+In an object, we normally would to attach Filter and Action with the object method.
+
+```php
+use Syntatis\WPHook\Registry;
+
+class HelloWorld
+{
+    public function initialise(): void
+    {
+        echo 'initialise';
+    }
+
+    public function content(string $content): string
+    {
+        return $content . "\ncontent";
+    }
+
+    public function option(string $optionName, mixed $value): void
+    {
+        echo $optionName . $value;
+    }
+}
+
+$helloWorld = new HelloWorld();
+$registry = new Registry();
+$registry->addAction('init', [$helloWorld, 'initialise']);
+$registry->addFilter('the_content', [$helloWorld, 'content'], 100);
+```
+
+However, this makes it rather tricky to remove the hook later on the code since you need to pass the same object instance to the `removeAction` and `removeFilter` methods, which is not always possible. To circumvent this, you can pass `id` to the `addAction` and `addFilter` methods, and refer the id using `@` symbol when removing the hook. For example:
+
+```php
+use Syntatis\WPHook\Registry;
+
+$helloWorld = new HelloWorld();
+$registry = new Registry();
+$registry->addAction('init', [$helloWorld, 'initialise'], 10, 1, ['id' => 'init-hello-world']);
+$registry->addFilter('the_content', [$helloWorld, 'content'], 100, 1, ['id' => 'the-content-hello-world']);
+
+// ...much later in the code...
+
+$registry->removeAction('init', '@init-hello-world', 10);
+$registry->removeFilter('the_content', '@the-content-hello-world', 100);
+```
+> [!IMPORTANT]
+> The ID must be all lowercase and use words separated by "-", ".", or "_". It should not have any uppercase letters, spaces, or special characters.
+> You can use a slash ("/") to define the namespace, like `acme/hello-world`, to avoid conflicts with other plugins or themes.
+> Each hook added to the registry must have a unique ID. If you use the same ID twice, an error will occur.
 
 ## References
 
