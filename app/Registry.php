@@ -210,7 +210,9 @@ final class Registry
 			preg_match('/^[a-z0-9\.\-\_\\\]+/', $options['id'], $matches);
 
 			if (count($matches) === 0) {
-				throw new InvalidArgumentException('Ref should only contains letters, numbers, hyphens, dots, underscores, and backslashes.');
+				throw new InvalidArgumentException(
+					'Invalid ref ID format. A ref ID should only contains letters, numbers, hyphens, dots, underscores, and backslashes.',
+				);
 			}
 
 			return $options['id'];
