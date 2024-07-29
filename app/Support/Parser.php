@@ -60,6 +60,7 @@ final class Parser implements Hookable
 				$this->obj,
 				$instance->getPriority(),
 				$instance->getAcceptedArgs(),
+				$instance->getOptions(),
 			);
 		}
 
@@ -71,6 +72,7 @@ final class Parser implements Hookable
 				$this->obj,
 				$instance->getPriority(),
 				$instance->getAcceptedArgs(),
+				$instance->getOptions(),
 			);
 		}
 	}
@@ -105,6 +107,7 @@ final class Parser implements Hookable
 					$callback,
 					$instance->getPriority(),
 					$instance->getAcceptedArgs(),
+					$instance->getOptions(),
 				);
 			}
 
@@ -116,6 +119,7 @@ final class Parser implements Hookable
 					$callback,
 					$instance->getPriority(),
 					$instance->getAcceptedArgs(),
+					$instance->getOptions(),
 				);
 			}
 		}
