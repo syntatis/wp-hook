@@ -131,7 +131,9 @@ $registry->addAction('init', [$helloWorld, 'initialise']);
 $registry->addFilter('the_content', [$helloWorld, 'content'], 100);
 ```
 
-However, this makes it rather tricky to remove the hook later on the code since you need to pass the same object instance to the `removeAction` and `removeFilter` methods, which is not always possible. To circumvent this, you can pass `id` to the `addAction` and `addFilter` methods, and refer the id using `@` symbol when removing the hook. For example:
+However, this makes it rather tricky to remove the hook later on the code since you need to pass the same object instance to the `removeAction` and `removeFilter` methods, which is not always possible.
+
+To circumvent this, you can pass `id` to the `addAction` and `addFilter` methods, and refer the id using `@` symbol when removing the hook. For example:
 
 ```php
 use Syntatis\WPHook\Registry;
