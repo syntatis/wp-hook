@@ -166,6 +166,7 @@ final class Registry
 	 * @param callable                                                                  $callback     The function to be called when the hook is triggered.
 	 * @param int                                                                       $priority     The priority at which the function should be fired.
 	 * @param int                                                                       $acceptedArgs The number of arguments that should be passed to the callback.
+	 *
 	 * @return array<array{tag:string,callback:callable,priority:int,accepted_args:int}>
 	 */
 	private function add(array $hooks, string $tag, callable $callback, int $priority, int $acceptedArgs): array
