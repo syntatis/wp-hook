@@ -25,7 +25,6 @@ class Filter
 
 	/**
 	 * @param array<string, mixed> $options
-	 *
 	 * @phpstan-param non-empty-string $name
 	 */
 	public function __construct(
