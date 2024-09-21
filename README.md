@@ -3,7 +3,7 @@
 ![Packagist Dependency Version](https://img.shields.io/packagist/dependency-v/syntatis/wp-hook/php?color=%237A86B8) [![wp](https://github.com/syntatis/wp-hook/actions/workflows/wp.yml/badge.svg)](https://github.com/syntatis/wp-hook/actions/workflows/wp.yml) [![codecov](https://codecov.io/gh/syntatis/wp-hook/graph/badge.svg?token=04HZ3BRM19)](https://codecov.io/gh/syntatis/wp-hook)
 
 > [!CAUTION]
-> This package is currently in active development. Please be aware that there may be some changes as the package continue to evolve.
+> This package is now part of [Codex](https://github.com/syntatis/codex).
 
 A class wrapper designed to use WordPress hooks with object-oriented programming (OOP), inspired by the [WordPress Plugin Boilerplate](https://wppb.me/). This class helps you stay organized and maintain structure when managing hooks in your WordPress plugin or theme.
 
